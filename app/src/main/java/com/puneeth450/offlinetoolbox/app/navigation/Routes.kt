@@ -15,4 +15,6 @@ object Routes {
     const val HASH = "hash"
     const val LOREM = "lorem"
     const val COLOR = "color"
+    const val DEVICE_INFO = "device_info"
+    const val UNIT_CONVERTER = "unit_converter"
 }

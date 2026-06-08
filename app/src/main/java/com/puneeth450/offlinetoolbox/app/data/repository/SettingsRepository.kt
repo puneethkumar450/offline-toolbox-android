@@ -18,7 +18,7 @@ class SettingsRepository(private val context: Context) {
         val RecentTools = stringSetPreferencesKey("recent_tools")
     }
 
-    val isDarkTheme: Flow<Boolean> = context.dataStore.data.map { it[Keys.DarkTheme] ?: false }
+    val isDarkTheme: Flow<Boolean> = context.dataStore.data.map { it[Keys.DarkTheme] ?: true }
     val favorites: Flow<Set<String>> = context.dataStore.data.map { it[Keys.Favorites] ?: emptySet() }
     val recentTools: Flow<Set<String>> = context.dataStore.data.map { it[Keys.RecentTools] ?: emptySet() }
 

@@ -6,8 +6,33 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-private val LightColors = lightColorScheme()
-private val DarkColors = darkColorScheme()
+private val LightColors = lightColorScheme(
+    primary = DayPrimary,
+    onPrimary = DaySurface,
+    secondary = DaySecondary,
+    onSecondary = DaySurface,
+    tertiary = DayAccent,
+    background = DayBackground,
+    onBackground = DayText,
+    surface = DaySurface,
+    onSurface = DayText,
+    surfaceVariant = DaySurfaceAlt,
+    onSurfaceVariant = DayMuted
+)
+
+private val DarkColors = darkColorScheme(
+    primary = NightPrimary,
+    onPrimary = NightBackground,
+    secondary = NightSecondary,
+    onSecondary = NightBackground,
+    tertiary = NightAccent,
+    background = NightBackground,
+    onBackground = NightText,
+    surface = NightSurface,
+    onSurface = NightText,
+    surfaceVariant = NightSurfaceAlt,
+    onSurfaceVariant = NightMuted
+)
 
 @Composable
 fun OfflineToolboxTheme(
@@ -16,7 +41,7 @@ fun OfflineToolboxTheme(
 ) {
     MaterialTheme(
         colorScheme = if (darkTheme) DarkColors else LightColors,
-        typography = MaterialTheme.typography,
+        typography = AppTypography,
         content = content
     )
 }

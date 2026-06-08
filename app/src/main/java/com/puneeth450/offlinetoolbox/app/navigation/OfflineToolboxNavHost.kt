@@ -9,6 +9,8 @@ import com.puneeth450.offlinetoolbox.app.feature.developer.hash.HashGeneratorScr
 import com.puneeth450.offlinetoolbox.app.feature.developer.json.JsonFormatterScreen
 import com.puneeth450.offlinetoolbox.app.feature.developer.lorem.LoremGeneratorScreen
 import com.puneeth450.offlinetoolbox.app.feature.developer.url.UrlCodecScreen
+import com.puneeth450.offlinetoolbox.app.feature.device.info.DeviceInfoScreen
+import com.puneeth450.offlinetoolbox.app.feature.device.unit.UnitConverterScreen
 import com.puneeth450.offlinetoolbox.app.feature.finance.discount.DiscountCalculatorScreen
 import com.puneeth450.offlinetoolbox.app.feature.finance.emi.EmiCalculatorScreen
 import com.puneeth450.offlinetoolbox.app.feature.finance.rule72.Rule72CalculatorScreen
@@ -37,5 +39,7 @@ fun OfflineToolboxNavHost() {
         composable(Routes.HASH) { HashGeneratorScreen() }
         composable(Routes.LOREM) { LoremGeneratorScreen() }
         composable(Routes.COLOR) { ColorConverterScreen() }
+        composable(Routes.DEVICE_INFO) { DeviceInfoScreen() }
+        composable(Routes.UNIT_CONVERTER) { UnitConverterScreen() }
     }
 }
