@@ -27,26 +27,20 @@ class EmiCalculatorViewModel @Inject constructor() : ViewModel() {
 
     fun calculate() {
         runCatching {
-            when ("emi") {
-                "emi" -> {
-                    val r = FinanceCalculators.calculateEmi(_uiState.value.input1.toDouble(), _uiState.value.input2.toDouble(), _uiState.value.input3.toInt())
-                    "EMI: %.2f
-Interest: %.2f
-Total: %.2f".format(r.emi, r.totalInterest, r.totalPayment)
-                }
-                "split" -> {
-                    val r = FinanceCalculators.splitBill(_uiState.value.input1.toDouble(), _uiState.value.input2.toInt(), _uiState.value.input3.toDoubleOrNull() ?: 0.0)
-                    "Grand total: %.2f
-Per person: %.2f".format(r.grandTotal, r.perPerson)
-                }
-                "discount" -> {
-                    val r = FinanceCalculators.discount(_uiState.value.input1.toDouble(), _uiState.value.input2.toDouble())
-                    "Final price: %.2f
-Saved: %.2f".format(r.finalPrice, r.savedAmount)
-                }
-                else -> "Years to double: %.2f".format(FinanceCalculators.ruleOf72(_uiState.value.input1.toDouble()))
-            }
-        }.onSuccess { output -> _uiState.update { it.copy(result = output, error = null) } }
-         .onFailure { e -> _uiState.update { it.copy(error = e.message ?: "Invalid input") } }
+            val result = FinanceCalculators.calculateEmi(
+                principal = _uiState.value.input1.toDouble(),
+                annualRate = _uiState.value.input2.toDouble(),
+                tenureMonths = _uiState.value.input3.toInt() * 12
+            )
+            "EMI: %.2f\nInterest: %.2f\nTotal: %.2f".format(
+                result.emi,
+                result.totalInterest,
+                result.totalPayment
+            )
+        }.onSuccess { output ->
+            _uiState.update { it.copy(result = output, error = null) }
+        }.onFailure { error ->
+            _uiState.update { it.copy(error = error.message ?: "Invalid input") }
+        }
     }
 }
