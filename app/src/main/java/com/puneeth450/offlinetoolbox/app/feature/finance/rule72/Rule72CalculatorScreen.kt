@@ -11,9 +11,12 @@ import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
-fun Rule72CalculatorScreen(viewModel: Rule72CalculatorViewModel = hiltViewModel()) {
+fun Rule72CalculatorScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: Rule72CalculatorViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
-    ToolScaffold("Rule of 72 Calculator") {
+    ToolScaffold(title = "Rule of 72 Calculator", onNavigateBack = onNavigateBack) {
         OutlinedTextField(value = state.input1, onValueChange = viewModel::onInput1, label = { Text("Amount / value") })
         OutlinedTextField(value = state.input2, onValueChange = viewModel::onInput2, label = { Text("Rate / people / discount") })
         OutlinedTextField(value = state.input3, onValueChange = viewModel::onInput3, label = { Text("Tenure / tip optional") })

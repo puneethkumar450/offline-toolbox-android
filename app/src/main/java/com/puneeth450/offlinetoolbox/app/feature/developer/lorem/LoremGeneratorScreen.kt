@@ -11,9 +11,12 @@ import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
-fun LoremGeneratorScreen(viewModel: LoremGeneratorViewModel = hiltViewModel()) {
+fun LoremGeneratorScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: LoremGeneratorViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
-    ToolScaffold("Lorem Ipsum Generator") {
+    ToolScaffold(title = "Lorem Ipsum Generator", onNavigateBack = onNavigateBack) {
         OutlinedTextField(value = state.input, onValueChange = viewModel::onInput, label = { Text("Input") })
         Button(onClick = viewModel::runPrimary) { Text("Run") }
         state.error?.let { Text(it) }

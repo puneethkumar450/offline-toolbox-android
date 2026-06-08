@@ -21,10 +21,13 @@ import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
-fun StopwatchTimerScreen(viewModel: StopwatchTimerViewModel = hiltViewModel()) {
+fun StopwatchTimerScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: StopwatchTimerViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
 
-    ToolScaffold("Stopwatch & Timer") {
+    ToolScaffold(title = "Stopwatch & Timer", onNavigateBack = onNavigateBack) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             ModePill("Stopwatch", state.mode == StopwatchMode.STOPWATCH) { viewModel.setMode(StopwatchMode.STOPWATCH) }
             ModePill("Countdown", state.mode == StopwatchMode.TIMER) { viewModel.setMode(StopwatchMode.TIMER) }

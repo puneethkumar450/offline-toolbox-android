@@ -24,7 +24,10 @@ import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
-fun BreathingPacerScreen(viewModel: BreathingPacerViewModel = hiltViewModel()) {
+fun BreathingPacerScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: BreathingPacerViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
     val circleScale by animateFloatAsState(
         targetValue = when (state.phase) {
@@ -36,7 +39,7 @@ fun BreathingPacerScreen(viewModel: BreathingPacerViewModel = hiltViewModel()) {
         label = "breathingScale"
     )
 
-    ToolScaffold("Breathing Pacer") {
+    ToolScaffold(title = "Breathing Pacer", onNavigateBack = onNavigateBack) {
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center

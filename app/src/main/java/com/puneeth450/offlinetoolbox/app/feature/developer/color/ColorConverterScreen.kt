@@ -11,9 +11,12 @@ import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
-fun ColorConverterScreen(viewModel: ColorConverterViewModel = hiltViewModel()) {
+fun ColorConverterScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: ColorConverterViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
-    ToolScaffold("Color Converter") {
+    ToolScaffold(title = "Color Converter", onNavigateBack = onNavigateBack) {
         OutlinedTextField(value = state.input, onValueChange = viewModel::onInput, label = { Text("Input") })
         Button(onClick = viewModel::runPrimary) { Text("Run") }
         state.error?.let { Text(it) }

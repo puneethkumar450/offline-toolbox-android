@@ -17,9 +17,12 @@ import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
-fun HashGeneratorScreen(viewModel: HashGeneratorViewModel = hiltViewModel()) {
+fun HashGeneratorScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: HashGeneratorViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
-    ToolScaffold("Hash Generator") {
+    ToolScaffold(title = "Hash Generator", onNavigateBack = onNavigateBack) {
         OutlinedTextField(value = state.input, onValueChange = viewModel::onInput, label = { Text("Text to hash") })
         Row(
             modifier = androidx.compose.ui.Modifier.horizontalScroll(rememberScrollState()),

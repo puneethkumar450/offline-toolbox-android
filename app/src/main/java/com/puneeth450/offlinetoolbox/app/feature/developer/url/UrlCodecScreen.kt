@@ -14,9 +14,12 @@ import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
-fun UrlCodecScreen(viewModel: UrlCodecViewModel = hiltViewModel()) {
+fun UrlCodecScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: UrlCodecViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
-    ToolScaffold("URL Encoder/Decoder") {
+    ToolScaffold(title = "URL Encoder/Decoder", onNavigateBack = onNavigateBack) {
         OutlinedTextField(value = state.input, onValueChange = viewModel::onInput, label = { Text("URL text") })
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Button(onClick = { viewModel.setMode(UrlCodecMode.ENCODE) }) { Text("Encode") }

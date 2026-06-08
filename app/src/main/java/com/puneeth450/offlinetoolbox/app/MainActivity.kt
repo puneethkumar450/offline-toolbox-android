@@ -4,12 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.puneeth450.offlinetoolbox.app.data.repository.SettingsRepository
+import com.puneeth450.offlinetoolbox.app.data.repository.ThemeMode
 import com.puneeth450.offlinetoolbox.app.navigation.OfflineToolboxNavHost
 import com.puneeth450.offlinetoolbox.app.ui.theme.DayBackground
 import com.puneeth450.offlinetoolbox.app.ui.theme.NightBackground
@@ -26,7 +28,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val darkTheme by settingsRepository.isDarkTheme.collectAsStateWithLifecycle(initialValue = false)
+            val themeMode by settingsRepository.themeMode.collectAsStateWithLifecycle(initialValue = ThemeMode.SYSTEM)
+            val systemDarkTheme = isSystemInDarkTheme()
+            val darkTheme = when (themeMode) {
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+                ThemeMode.SYSTEM -> systemDarkTheme
+            }
             val systemBarColor = remember(darkTheme) {
                 if (darkTheme) NightBackground.toArgb() else DayBackground.toArgb()
             }

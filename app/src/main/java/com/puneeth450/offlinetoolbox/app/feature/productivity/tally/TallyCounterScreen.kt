@@ -18,10 +18,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
-fun TallyCounterScreen(viewModel: TallyCounterViewModel = hiltViewModel()) {
+fun TallyCounterScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: TallyCounterViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
 
-    ToolScaffold("Tally Counter") {
+    ToolScaffold(title = "Tally Counter", onNavigateBack = onNavigateBack) {
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             Text(
                 text = state.count.toString(),

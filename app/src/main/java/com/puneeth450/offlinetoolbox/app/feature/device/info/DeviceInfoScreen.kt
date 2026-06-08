@@ -6,8 +6,8 @@ import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
-fun DeviceInfoScreen() {
-    ToolScaffold("Device Information") {
+fun DeviceInfoScreen(onNavigateBack: () -> Unit) {
+    ToolScaffold(title = "Device Information", onNavigateBack = onNavigateBack) {
         ResultCard("Manufacturer", Build.MANUFACTURER.orEmpty())
         ResultCard("Model", Build.MODEL.orEmpty())
         ResultCard("Device", Build.DEVICE.orEmpty())

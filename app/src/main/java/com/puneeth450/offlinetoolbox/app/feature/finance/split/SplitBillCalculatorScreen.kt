@@ -11,9 +11,12 @@ import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
-fun SplitBillCalculatorScreen(viewModel: SplitBillCalculatorViewModel = hiltViewModel()) {
+fun SplitBillCalculatorScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: SplitBillCalculatorViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
-    ToolScaffold("Split Bill Calculator") {
+    ToolScaffold(title = "Split Bill Calculator", onNavigateBack = onNavigateBack) {
         OutlinedTextField(value = state.input1, onValueChange = viewModel::onInput1, label = { Text("Amount / value") })
         OutlinedTextField(value = state.input2, onValueChange = viewModel::onInput2, label = { Text("Rate / people / discount") })
         OutlinedTextField(value = state.input3, onValueChange = viewModel::onInput3, label = { Text("Tenure / tip optional") })

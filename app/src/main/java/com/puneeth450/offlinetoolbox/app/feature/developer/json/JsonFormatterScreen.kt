@@ -14,9 +14,12 @@ import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
-fun JsonFormatterScreen(viewModel: JsonFormatterViewModel = hiltViewModel()) {
+fun JsonFormatterScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: JsonFormatterViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
-    ToolScaffold("JSON Formatter") {
+    ToolScaffold(title = "JSON Formatter", onNavigateBack = onNavigateBack) {
         OutlinedTextField(value = state.input, onValueChange = viewModel::onInput, label = { Text("Paste JSON") })
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Button(onClick = { viewModel.setMode(JsonMode.FORMAT) }) { Text("Format") }

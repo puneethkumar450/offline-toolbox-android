@@ -3,6 +3,7 @@ package com.puneeth450.offlinetoolbox.app.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.puneeth450.offlinetoolbox.app.data.repository.SettingsRepository
+import com.puneeth450.offlinetoolbox.app.data.repository.ThemeMode
 import com.puneeth450.offlinetoolbox.app.domain.model.ToolCatalog
 import com.puneeth450.offlinetoolbox.app.domain.model.ToolCategory
 import com.puneeth450.offlinetoolbox.app.domain.model.ToolInfo
@@ -12,14 +13,23 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+
+enum class HomeLayoutMode { LIST, GRID }
 
 data class HomeUiState(
     val query: String = "",
     val selectedCategory: ToolCategory? = null,
     val favorites: Set<String> = emptySet(),
+    val recentTools: List<ToolInfo> = emptyList(),
+    val isHistoryVisible: Boolean = false,
+    val layoutMode: HomeLayoutMode = HomeLayoutMode.LIST,
     val darkTheme: Boolean = true,
+    val themeMode: ThemeMode = ThemeMode.SYSTEM,
+    val orderedCategories: List<ToolCategory> = ToolCategory.entries,
+    val categoryColors: Map<ToolCategory, String> = ToolCategory.entries.associateWith { it.defaultColorHex },
     val tools: List<ToolInfo> = ToolCatalog.all
 )
 
@@ -29,37 +39,115 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     private val query = MutableStateFlow("")
     private val selectedCategory = MutableStateFlow<ToolCategory?>(null)
-
-    val uiState: StateFlow<HomeUiState> = combine(
+    private val isHistoryVisible = MutableStateFlow(false)
+    private val layoutMode = MutableStateFlow(HomeLayoutMode.LIST)
+    private val homePrefs = combine(
         query,
         selectedCategory,
-        settingsRepository.favorites,
-        settingsRepository.isDarkTheme
-    ) { search, category, favorites, darkTheme ->
+        isHistoryVisible,
+        layoutMode
+    ) { search, category, historyVisible, layout ->
+        HomeUiState(
+            query = search,
+            selectedCategory = category,
+            isHistoryVisible = historyVisible,
+            layoutMode = layout
+        )
+    }
+    private val catalogState = homePrefs.map { base ->
         val filtered = ToolCatalog.all.filter { tool ->
-            val matchesQuery = search.isBlank() ||
-                tool.title.contains(search, ignoreCase = true) ||
-                tool.subtitle.contains(search, ignoreCase = true) ||
-                tool.category.title.contains(search, ignoreCase = true) ||
-                tool.keywords.any { it.contains(search, ignoreCase = true) }
-            val matchesCategory = category == null || tool.category == category
+            val matchesQuery = base.query.isBlank() ||
+                tool.title.contains(base.query, ignoreCase = true) ||
+                tool.subtitle.contains(base.query, ignoreCase = true) ||
+                tool.category.title.contains(base.query, ignoreCase = true) ||
+                tool.keywords.any { it.contains(base.query, ignoreCase = true) }
+            val matchesCategory = base.selectedCategory == null || tool.category == base.selectedCategory
             matchesQuery && matchesCategory
         }
-        HomeUiState(search, category, favorites, darkTheme, filtered)
+        base.copy(tools = filtered)
+    }
+    private val settingsState = combine(
+        settingsRepository.favorites,
+        settingsRepository.recentTools,
+        settingsRepository.themeMode,
+        settingsRepository.categoryOrder,
+        settingsRepository.categoryColors
+    ) { favorites, recentIds, themeMode, categoryOrder, categoryColors ->
+        SettingsUiState(favorites, recentIds, themeMode, categoryOrder, categoryColors)
+    }
+
+    val uiState: StateFlow<HomeUiState> = combine(
+        catalogState,
+        settingsState
+    ) { catalog, settings ->
+        val recentTools = settings.recentIds.mapNotNull { id -> ToolCatalog.all.find { it.id == id } }
+        val orderedCategories = buildList {
+            settings.categoryOrder.forEach { name ->
+                ToolCategory.entries.firstOrNull { it.name == name }?.let(::add)
+            }
+            ToolCategory.entries.filterNot { it in this }.forEach(::add)
+        }
+        val resolvedColors = ToolCategory.entries.associateWith { category ->
+            settings.categoryColors[category.name] ?: category.defaultColorHex
+        }
+        catalog.copy(
+            favorites = settings.favorites,
+            recentTools = recentTools,
+            darkTheme = settings.themeMode == ThemeMode.DARK,
+            themeMode = settings.themeMode,
+            orderedCategories = orderedCategories,
+            categoryColors = resolvedColors
+        )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState(darkTheme = true))
 
     fun onSearchChanged(value: String) { query.value = value }
     fun onCategorySelected(category: ToolCategory?) { selectedCategory.value = category }
+    fun toggleHistory() { isHistoryVisible.value = !isHistoryVisible.value }
+    fun toggleLayoutMode() {
+        layoutMode.value = if (layoutMode.value == HomeLayoutMode.LIST) HomeLayoutMode.GRID else HomeLayoutMode.LIST
+    }
 
     fun toggleFavorite(toolId: String) {
         viewModelScope.launch { settingsRepository.toggleFavorite(toolId) }
     }
 
-    fun toggleTheme() {
-        viewModelScope.launch { settingsRepository.setDarkTheme(!uiState.value.darkTheme) }
+    fun cycleThemeMode() {
+        val next = when (uiState.value.themeMode) {
+            ThemeMode.LIGHT -> ThemeMode.DARK
+            ThemeMode.DARK -> ThemeMode.SYSTEM
+            ThemeMode.SYSTEM -> ThemeMode.LIGHT
+        }
+        setThemeMode(next)
+    }
+
+    fun setThemeMode(mode: ThemeMode) {
+        viewModelScope.launch { settingsRepository.setThemeMode(mode) }
+    }
+
+    fun setCategoryColor(category: ToolCategory, colorHex: String) {
+        viewModelScope.launch { settingsRepository.setCategoryColor(category.name, colorHex) }
+    }
+
+    fun moveCategory(category: ToolCategory, direction: Int) {
+        val current = uiState.value.orderedCategories.toMutableList()
+        val index = current.indexOf(category)
+        if (index == -1) return
+        val newIndex = (index + direction).coerceIn(0, current.lastIndex)
+        if (newIndex == index) return
+        current.removeAt(index)
+        current.add(newIndex, category)
+        viewModelScope.launch { settingsRepository.setCategoryOrder(current.map { it.name }) }
     }
 
     fun markRecent(toolId: String) {
         viewModelScope.launch { settingsRepository.markRecent(toolId) }
     }
 }
+
+private data class SettingsUiState(
+    val favorites: Set<String>,
+    val recentIds: Set<String>,
+    val themeMode: ThemeMode,
+    val categoryOrder: List<String>,
+    val categoryColors: Map<String, String>
+)

@@ -20,10 +20,13 @@ import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
-fun UnitConverterScreen(viewModel: UnitConverterViewModel = hiltViewModel()) {
+fun UnitConverterScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: UnitConverterViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
 
-    ToolScaffold("Unit Converter") {
+    ToolScaffold(title = "Unit Converter", onNavigateBack = onNavigateBack) {
         Row(
             modifier = Modifier.horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp)

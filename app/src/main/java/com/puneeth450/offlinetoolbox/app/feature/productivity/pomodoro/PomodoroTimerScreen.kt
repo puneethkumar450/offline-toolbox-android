@@ -19,10 +19,13 @@ import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
-fun PomodoroTimerScreen(viewModel: PomodoroTimerViewModel = hiltViewModel()) {
+fun PomodoroTimerScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: PomodoroTimerViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
 
-    ToolScaffold("Pomodoro Timer") {
+    ToolScaffold(title = "Pomodoro Timer", onNavigateBack = onNavigateBack) {
         ResultCard(
             title = if (state.phase == PomodoroPhase.FOCUS) "Focus Session" else "Break Session",
             value = formatDuration(state.remainingMillis)

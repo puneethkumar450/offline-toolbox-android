@@ -11,9 +11,12 @@ import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
-fun EmiCalculatorScreen(viewModel: EmiCalculatorViewModel = hiltViewModel()) {
+fun EmiCalculatorScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: EmiCalculatorViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsState()
-    ToolScaffold("EMI Calculator") {
+    ToolScaffold(title = "EMI Calculator", onNavigateBack = onNavigateBack) {
         OutlinedTextField(value = state.input1, onValueChange = viewModel::onInput1, label = { Text("Amount / value") })
         OutlinedTextField(value = state.input2, onValueChange = viewModel::onInput2, label = { Text("Rate / people / discount") })
         OutlinedTextField(value = state.input3, onValueChange = viewModel::onInput3, label = { Text("Tenure / tip optional") })

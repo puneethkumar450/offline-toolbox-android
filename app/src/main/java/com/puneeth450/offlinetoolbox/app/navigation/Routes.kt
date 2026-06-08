@@ -2,6 +2,11 @@ package com.puneeth450.offlinetoolbox.app.navigation
 
 object Routes {
     const val HOME = "home"
+    const val FAVORITES = "favorites"
+    const val UPDATES = "updates"
+    const val SETTINGS = "settings"
+    const val SETTINGS_LAYOUT = "settings_layout"
+    const val SETTINGS_CATEGORY_COLORS = "settings_category_colors"
     const val POMODORO = "pomodoro"
     const val STOPWATCH_TIMER = "stopwatch_timer"
     const val BREATHING = "breathing"
