@@ -8,7 +8,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
+import com.puneeth450.offlinetoolbox.app.ui.components.ToolHeroCard
+import com.puneeth450.offlinetoolbox.app.ui.components.ToolMessageCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
+import com.puneeth450.offlinetoolbox.app.ui.components.ToolSectionCard
 
 @Composable
 fun ColorConverterScreen(
@@ -17,9 +20,15 @@ fun ColorConverterScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     ToolScaffold(title = "Color Converter", onNavigateBack = onNavigateBack) {
-        OutlinedTextField(value = state.input, onValueChange = viewModel::onInput, label = { Text("Input") })
-        Button(onClick = viewModel::runPrimary) { Text("Run") }
-        state.error?.let { Text(it) }
-        if (state.output.isNotBlank()) ResultCard("Output", state.output)
+        ToolHeroCard(
+            title = "Translate color formats",
+            description = "Convert HEX values into RGB and HSL for quick design or frontend work."
+        )
+        ToolSectionCard(title = "Color input", subtitle = "Enter a HEX value like #4D7CFE.") {
+            OutlinedTextField(value = state.input, onValueChange = viewModel::onInput, label = { Text("HEX color") })
+            Button(onClick = viewModel::runPrimary) { Text("Convert Color") }
+        }
+        state.error?.let { ToolMessageCard(message = it, isError = true) }
+        if (state.output.isNotBlank()) ResultCard("Converted output", state.output)
     }
 }

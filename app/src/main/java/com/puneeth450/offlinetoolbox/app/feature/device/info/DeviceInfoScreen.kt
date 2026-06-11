@@ -3,11 +3,16 @@ package com.puneeth450.offlinetoolbox.app.feature.device.info
 import android.os.Build
 import androidx.compose.runtime.Composable
 import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
+import com.puneeth450.offlinetoolbox.app.ui.components.ToolHeroCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
 
 @Composable
 fun DeviceInfoScreen(onNavigateBack: () -> Unit) {
     ToolScaffold(title = "Device Information", onNavigateBack = onNavigateBack) {
+        ToolHeroCard(
+            title = "Inspect this device quickly",
+            description = "Useful for debugging compatibility, support issues, and sharing basic hardware details."
+        )
         ResultCard("Manufacturer", Build.MANUFACTURER.orEmpty())
         ResultCard("Model", Build.MODEL.orEmpty())
         ResultCard("Device", Build.DEVICE.orEmpty())

@@ -26,6 +26,7 @@ import com.puneeth450.offlinetoolbox.app.feature.developer.hash.HashGeneratorScr
 import com.puneeth450.offlinetoolbox.app.feature.developer.json.JsonFormatterScreen
 import com.puneeth450.offlinetoolbox.app.feature.developer.lorem.LoremGeneratorScreen
 import com.puneeth450.offlinetoolbox.app.feature.developer.url.UrlCodecScreen
+import com.puneeth450.offlinetoolbox.app.feature.device.flashlight.FlashlightScreen
 import com.puneeth450.offlinetoolbox.app.feature.device.info.DeviceInfoScreen
 import com.puneeth450.offlinetoolbox.app.feature.device.unit.UnitConverterScreen
 import com.puneeth450.offlinetoolbox.app.feature.finance.discount.DiscountCalculatorScreen
@@ -110,6 +111,7 @@ fun OfflineToolboxNavHost() {
                 composable(Routes.HASH) { HashGeneratorScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.LOREM) { LoremGeneratorScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.COLOR) { ColorConverterScreen(onNavigateBack = navController::navigateUp) }
+                composable(Routes.FLASHLIGHT) { FlashlightScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.DEVICE_INFO) { DeviceInfoScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.UNIT_CONVERTER) { UnitConverterScreen(onNavigateBack = navController::navigateUp) }
             }

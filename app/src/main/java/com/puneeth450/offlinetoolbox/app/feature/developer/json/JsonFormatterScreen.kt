@@ -11,7 +11,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.puneeth450.offlinetoolbox.app.ui.components.ResultCard
+import com.puneeth450.offlinetoolbox.app.ui.components.ToolHeroCard
+import com.puneeth450.offlinetoolbox.app.ui.components.ToolMessageCard
 import com.puneeth450.offlinetoolbox.app.ui.components.ToolScaffold
+import com.puneeth450.offlinetoolbox.app.ui.components.ToolSectionCard
 
 @Composable
 fun JsonFormatterScreen(
@@ -20,13 +23,19 @@ fun JsonFormatterScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     ToolScaffold(title = "JSON Formatter", onNavigateBack = onNavigateBack) {
-        OutlinedTextField(value = state.input, onValueChange = viewModel::onInput, label = { Text("Paste JSON") })
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Button(onClick = { viewModel.setMode(JsonMode.FORMAT) }) { Text("Format") }
-            Button(onClick = { viewModel.setMode(JsonMode.MINIFY) }) { Text("Minify") }
-            Button(onClick = viewModel::runPrimary) { Text("Run") }
+        ToolHeroCard(
+            title = "Clean up payloads quickly",
+            description = "Format or minify JSON for easier debugging, sharing, and API inspection."
+        )
+        ToolSectionCard(title = "JSON input", subtitle = "Paste an object, array, or API response body below.") {
+            OutlinedTextField(value = state.input, onValueChange = viewModel::onInput, label = { Text("Paste JSON") })
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Button(onClick = { viewModel.setMode(JsonMode.FORMAT) }) { Text("Format") }
+                Button(onClick = { viewModel.setMode(JsonMode.MINIFY) }) { Text("Minify") }
+                Button(onClick = viewModel::runPrimary) { Text("Run") }
+            }
         }
-        state.error?.let { Text(it) }
+        state.error?.let { ToolMessageCard(message = it, isError = true) }
         if (state.output.isNotBlank()) ResultCard("Output", state.output)
     }
 }

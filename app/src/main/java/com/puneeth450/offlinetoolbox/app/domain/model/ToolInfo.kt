@@ -25,6 +25,7 @@ object ToolCatalog {
         ToolInfo("hash", "Hash Generator", "MD5, SHA-1, SHA-256 and SHA-512", ToolCategory.DEVELOPER, "hash", listOf("checksum", "security")),
         ToolInfo("lorem", "Lorem Ipsum Generator", "Generate placeholder text blocks", ToolCategory.DEVELOPER, "lorem", listOf("copy", "placeholder")),
         ToolInfo("color", "Color Converter", "HEX, RGB and HSL conversion", ToolCategory.DEVELOPER, "color", listOf("design", "hex", "rgb")),
+        ToolInfo("flashlight", "Flashlight", "Quick torch access with hardware checks", ToolCategory.DEVICE, "flashlight", listOf("torch", "light"), true),
         ToolInfo("device_info", "Device Information", "Key hardware and Android build details", ToolCategory.DEVICE, "device_info", listOf("model", "android", "system"), true),
         ToolInfo("unit_converter", "Unit Converter", "Length, weight and temperature units", ToolCategory.DEVICE, "unit_converter", listOf("measurement", "convert"), true)
     )
