@@ -128,6 +128,10 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch { settingsRepository.setCategoryColor(category.name, colorHex) }
     }
 
+    fun setCategoryOrder(order: List<ToolCategory>) {
+        viewModelScope.launch { settingsRepository.setCategoryOrder(order.map { it.name }) }
+    }
+
     fun moveCategory(category: ToolCategory, direction: Int) {
         val current = uiState.value.orderedCategories.toMutableList()
         val index = current.indexOf(category)
