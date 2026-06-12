@@ -17,9 +17,16 @@ enum class ThemeMode {
     SYSTEM
 }
 
+enum class LayoutStyle {
+    MODERN,
+    CLASSIC
+}
+
 class SettingsRepository(private val context: Context) {
     private object Keys {
         val ThemeMode = stringPreferencesKey("theme_mode")
+        val LayoutStyle = stringPreferencesKey("layout_style")
+        val DynamicColors = stringPreferencesKey("dynamic_colors")
         val Favorites = stringSetPreferencesKey("favorites")
         val RecentTools = stringSetPreferencesKey("recent_tools")
         val CategoryOrder = stringPreferencesKey("category_order")
@@ -30,6 +37,14 @@ class SettingsRepository(private val context: Context) {
         prefs[Keys.ThemeMode]?.let { value ->
             ThemeMode.entries.firstOrNull { it.name == value }
         } ?: ThemeMode.SYSTEM
+    }
+    val layoutStyle: Flow<LayoutStyle> = context.dataStore.data.map { prefs ->
+        prefs[Keys.LayoutStyle]?.let { value ->
+            LayoutStyle.entries.firstOrNull { it.name == value }
+        } ?: LayoutStyle.MODERN
+    }
+    val dynamicColors: Flow<Boolean> = context.dataStore.data.map { prefs ->
+        prefs[Keys.DynamicColors]?.toBooleanStrictOrNull() ?: true
     }
     val categoryOrder: Flow<List<String>> = context.dataStore.data.map { prefs ->
         prefs[Keys.CategoryOrder]
@@ -54,6 +69,14 @@ class SettingsRepository(private val context: Context) {
 
     suspend fun setThemeMode(mode: ThemeMode) {
         context.dataStore.edit { it[Keys.ThemeMode] = mode.name }
+    }
+
+    suspend fun setLayoutStyle(style: LayoutStyle) {
+        context.dataStore.edit { it[Keys.LayoutStyle] = style.name }
+    }
+
+    suspend fun setDynamicColors(enabled: Boolean) {
+        context.dataStore.edit { it[Keys.DynamicColors] = enabled.toString() }
     }
 
     suspend fun setCategoryOrder(order: List<String>) {

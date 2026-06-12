@@ -1,0 +1,6 @@
+<resources>
+    <color name="day_primary">#7AB6FC</color>
+    <color name="day_background">#F5F7FB</color>
+    <color name="day_surface">#FFFFFF</color>
+    <color name="day_text">#172033</color>
+</resources>
