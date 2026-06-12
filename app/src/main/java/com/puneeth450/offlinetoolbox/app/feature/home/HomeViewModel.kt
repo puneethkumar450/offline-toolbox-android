@@ -2,6 +2,7 @@ package com.puneeth450.offlinetoolbox.app.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.puneeth450.offlinetoolbox.app.data.repository.LayoutStyle
 import com.puneeth450.offlinetoolbox.app.data.repository.SettingsRepository
 import com.puneeth450.offlinetoolbox.app.data.repository.ThemeMode
 import com.puneeth450.offlinetoolbox.app.domain.model.ToolCatalog
@@ -28,6 +29,7 @@ data class HomeUiState(
     val layoutMode: HomeLayoutMode = HomeLayoutMode.LIST,
     val darkTheme: Boolean = true,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
+    val dynamicColors: Boolean = true,
     val orderedCategories: List<ToolCategory> = ToolCategory.entries,
     val categoryColors: Map<ToolCategory, String> = ToolCategory.entries.associateWith { it.defaultColorHex },
     val tools: List<ToolInfo> = ToolCatalog.all
@@ -40,18 +42,15 @@ class HomeViewModel @Inject constructor(
     private val query = MutableStateFlow("")
     private val selectedCategory = MutableStateFlow<ToolCategory?>(null)
     private val isHistoryVisible = MutableStateFlow(false)
-    private val layoutMode = MutableStateFlow(HomeLayoutMode.LIST)
     private val homePrefs = combine(
         query,
         selectedCategory,
-        isHistoryVisible,
-        layoutMode
-    ) { search, category, historyVisible, layout ->
+        isHistoryVisible
+    ) { search, category, historyVisible ->
         HomeUiState(
             query = search,
             selectedCategory = category,
-            isHistoryVisible = historyVisible,
-            layoutMode = layout
+            isHistoryVisible = historyVisible
         )
     }
     private val catalogState = homePrefs.map { base ->
@@ -66,14 +65,34 @@ class HomeViewModel @Inject constructor(
         }
         base.copy(tools = filtered)
     }
-    private val settingsState = combine(
+    private val categorySettingsState = combine(
+        settingsRepository.categoryOrder,
+        settingsRepository.categoryColors
+    ) { categoryOrder, categoryColors ->
+        CategorySettingsUiState(categoryOrder, categoryColors)
+    }
+    private val baseSettingsState = combine(
         settingsRepository.favorites,
         settingsRepository.recentTools,
         settingsRepository.themeMode,
-        settingsRepository.categoryOrder,
-        settingsRepository.categoryColors
-    ) { favorites, recentIds, themeMode, categoryOrder, categoryColors ->
-        SettingsUiState(favorites, recentIds, themeMode, categoryOrder, categoryColors)
+        settingsRepository.dynamicColors,
+        settingsRepository.layoutStyle
+    ) { favorites, recentIds, themeMode, dynamicColors, layoutStyle ->
+        BaseSettingsUiState(favorites, recentIds, themeMode, dynamicColors, layoutStyle)
+    }
+    private val settingsState = combine(
+        baseSettingsState,
+        categorySettingsState
+    ) { base, categories ->
+        SettingsUiState(
+            base.favorites,
+            base.recentIds,
+            base.themeMode,
+            base.dynamicColors,
+            base.layoutStyle,
+            categories.categoryOrder,
+            categories.categoryColors
+        )
     }
 
     val uiState: StateFlow<HomeUiState> = combine(
@@ -95,6 +114,8 @@ class HomeViewModel @Inject constructor(
             recentTools = recentTools,
             darkTheme = settings.themeMode == ThemeMode.DARK,
             themeMode = settings.themeMode,
+            dynamicColors = settings.dynamicColors,
+            layoutMode = settings.layoutStyle.toHomeLayoutMode(),
             orderedCategories = orderedCategories,
             categoryColors = resolvedColors
         )
@@ -104,7 +125,8 @@ class HomeViewModel @Inject constructor(
     fun onCategorySelected(category: ToolCategory?) { selectedCategory.value = category }
     fun toggleHistory() { isHistoryVisible.value = !isHistoryVisible.value }
     fun toggleLayoutMode() {
-        layoutMode.value = if (layoutMode.value == HomeLayoutMode.LIST) HomeLayoutMode.GRID else HomeLayoutMode.LIST
+        val next = if (uiState.value.layoutMode == HomeLayoutMode.LIST) LayoutStyle.CLASSIC else LayoutStyle.MODERN
+        setLayoutStyle(next)
     }
 
     fun toggleFavorite(toolId: String) {
@@ -122,6 +144,14 @@ class HomeViewModel @Inject constructor(
 
     fun setThemeMode(mode: ThemeMode) {
         viewModelScope.launch { settingsRepository.setThemeMode(mode) }
+    }
+
+    fun setLayoutStyle(style: LayoutStyle) {
+        viewModelScope.launch { settingsRepository.setLayoutStyle(style) }
+    }
+
+    fun setDynamicColors(enabled: Boolean) {
+        viewModelScope.launch { settingsRepository.setDynamicColors(enabled) }
     }
 
     fun setCategoryColor(category: ToolCategory, colorHex: String) {
@@ -152,6 +182,26 @@ private data class SettingsUiState(
     val favorites: Set<String>,
     val recentIds: Set<String>,
     val themeMode: ThemeMode,
+    val dynamicColors: Boolean,
+    val layoutStyle: LayoutStyle,
     val categoryOrder: List<String>,
     val categoryColors: Map<String, String>
 )
+
+private data class BaseSettingsUiState(
+    val favorites: Set<String>,
+    val recentIds: Set<String>,
+    val themeMode: ThemeMode,
+    val dynamicColors: Boolean,
+    val layoutStyle: LayoutStyle
+)
+
+private data class CategorySettingsUiState(
+    val categoryOrder: List<String>,
+    val categoryColors: Map<String, String>
+)
+
+private fun LayoutStyle.toHomeLayoutMode(): HomeLayoutMode = when (this) {
+    LayoutStyle.MODERN -> HomeLayoutMode.LIST
+    LayoutStyle.CLASSIC -> HomeLayoutMode.GRID
+}
