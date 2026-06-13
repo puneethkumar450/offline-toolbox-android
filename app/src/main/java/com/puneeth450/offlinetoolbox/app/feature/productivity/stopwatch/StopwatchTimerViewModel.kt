@@ -1,5 +1,6 @@
 package com.puneeth450.offlinetoolbox.app.feature.productivity.stopwatch
 
+import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,13 +12,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-enum class StopwatchMode { STOPWATCH, TIMER }
+data class StopwatchLap(
+    val index: Int,
+    val totalMillis: Long,
+    val deltaMillis: Long
+)
 
 data class StopwatchTimerUiState(
-    val mode: StopwatchMode = StopwatchMode.STOPWATCH,
     val elapsedMillis: Long = 0L,
-    val timerInputMinutes: String = "1",
-    val isRunning: Boolean = false
+    val isRunning: Boolean = false,
+    val laps: List<StopwatchLap> = emptyList()
 )
 
 @HiltViewModel
@@ -26,85 +30,72 @@ class StopwatchTimerViewModel @Inject constructor() : ViewModel() {
     val uiState: StateFlow<StopwatchTimerUiState> = _uiState
 
     private var ticker: Job? = null
-
-    fun setMode(mode: StopwatchMode) {
-        ticker?.cancel()
-        _uiState.update {
-            it.copy(
-                mode = mode,
-                isRunning = false,
-                elapsedMillis = if (mode == StopwatchMode.STOPWATCH) 0L else inputMinutesToMillis(it.timerInputMinutes)
-            )
-        }
-    }
-
-    fun onTimerInputChanged(value: String) {
-        val sanitized = value.filter { it.isDigit() }.take(3)
-        _uiState.update {
-            it.copy(
-                timerInputMinutes = sanitized.ifBlank { "" },
-                elapsedMillis = if (!it.isRunning && it.mode == StopwatchMode.TIMER) {
-                    inputMinutesToMillis(sanitized)
-                } else {
-                    it.elapsedMillis
-                }
-            )
-        }
-    }
+    private var baseElapsedMillis = 0L
+    private var startedAtRealtime = 0L
 
     fun toggle() {
-        if (_uiState.value.isRunning) stop() else start()
+        if (_uiState.value.isRunning) {
+            pause()
+        } else {
+            start()
+        }
     }
 
     fun reset() {
         ticker?.cancel()
+        ticker = null
+        baseElapsedMillis = 0L
+        startedAtRealtime = 0L
+        _uiState.value = StopwatchTimerUiState()
+    }
+
+    fun recordLap() {
+        val currentState = _uiState.value
+        if (!currentState.isRunning) return
+
+        val previousLapTotal = currentState.laps.firstOrNull()?.totalMillis ?: 0L
+        val lapTotal = currentState.elapsedMillis
+        val lapDelta = lapTotal - previousLapTotal
+        val nextIndex = currentState.laps.size + 1
+
         _uiState.update {
             it.copy(
-                isRunning = false,
-                elapsedMillis = if (it.mode == StopwatchMode.STOPWATCH) 0L else inputMinutesToMillis(it.timerInputMinutes)
+                laps = listOf(
+                    StopwatchLap(
+                        index = nextIndex,
+                        totalMillis = lapTotal,
+                        deltaMillis = lapDelta
+                    )
+                ) + it.laps
             )
         }
     }
 
     private fun start() {
+        if (_uiState.value.isRunning) return
+        startedAtRealtime = SystemClock.elapsedRealtime() - baseElapsedMillis
+        _uiState.update { it.copy(isRunning = true) }
         ticker?.cancel()
-        _uiState.update { current ->
-            current.copy(
-                isRunning = true,
-                elapsedMillis = if (current.mode == StopwatchMode.TIMER && current.elapsedMillis == 0L) {
-                    inputMinutesToMillis(current.timerInputMinutes)
-                } else {
-                    current.elapsedMillis
-                }
-            )
-        }
         ticker = viewModelScope.launch {
             while (true) {
-                delay(100L)
-                val current = _uiState.value
-                if (!current.isRunning) break
-                when (current.mode) {
-                    StopwatchMode.STOPWATCH -> _uiState.update { it.copy(elapsedMillis = it.elapsedMillis + 100L) }
-                    StopwatchMode.TIMER -> {
-                        if (current.elapsedMillis <= 100L) {
-                            _uiState.update { it.copy(elapsedMillis = 0L, isRunning = false) }
-                            break
-                        } else {
-                            _uiState.update { it.copy(elapsedMillis = it.elapsedMillis - 100L) }
-                        }
-                    }
-                }
+                val elapsed = SystemClock.elapsedRealtime() - startedAtRealtime
+                baseElapsedMillis = elapsed
+                _uiState.update { it.copy(elapsedMillis = elapsed) }
+                delay(10L)
             }
         }
     }
 
-    private fun stop() {
+    private fun pause() {
         ticker?.cancel()
-        _uiState.update { it.copy(isRunning = false) }
-    }
-
-    private fun inputMinutesToMillis(value: String): Long {
-        val minutes = value.toLongOrNull()?.coerceIn(0L, 999L) ?: 0L
-        return minutes * 60_000L
+        ticker = null
+        val elapsed = SystemClock.elapsedRealtime() - startedAtRealtime
+        baseElapsedMillis = elapsed
+        _uiState.update {
+            it.copy(
+                elapsedMillis = elapsed,
+                isRunning = false
+            )
+        }
     }
 }
