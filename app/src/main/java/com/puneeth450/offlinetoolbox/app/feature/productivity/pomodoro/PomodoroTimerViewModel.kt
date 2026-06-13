@@ -16,11 +16,15 @@ enum class PomodoroPhase { FOCUS, BREAK }
 data class PomodoroTimerUiState(
     val focusMinutes: Int = 25,
     val breakMinutes: Int = 5,
+    val totalCycles: Int = 4,
     val phase: PomodoroPhase = PomodoroPhase.FOCUS,
     val remainingMillis: Long = 25 * 60 * 1000L,
     val completedSessions: Int = 0,
     val isRunning: Boolean = false
-)
+) {
+    val currentCycle: Int
+        get() = (completedSessions + 1).coerceAtMost(totalCycles)
+}
 
 @HiltViewModel
 class PomodoroTimerViewModel @Inject constructor() : ViewModel() {
@@ -39,35 +43,33 @@ class PomodoroTimerViewModel @Inject constructor() : ViewModel() {
             it.copy(
                 isRunning = false,
                 phase = PomodoroPhase.FOCUS,
-                remainingMillis = it.focusMinutes * 60 * 1000L
+                remainingMillis = it.focusMinutes * 60 * 1000L,
+                completedSessions = 0
             )
         }
     }
 
-    fun adjustFocus(delta: Int) {
-        updateDuration(delta, isFocus = true)
-    }
-
-    fun adjustBreak(delta: Int) {
-        updateDuration(delta, isFocus = false)
-    }
-
-    private fun updateDuration(delta: Int, isFocus: Boolean) {
+    fun saveSettings(focusMinutes: Int, breakMinutes: Int, totalCycles: Int) {
         timerJob?.cancel()
         _uiState.update { state ->
-            val focus = if (isFocus) (state.focusMinutes + delta).coerceIn(5, 90) else state.focusMinutes
-            val breakMinutes = if (isFocus) state.breakMinutes else (state.breakMinutes + delta).coerceIn(1, 30)
-            val phase = if (state.phase == PomodoroPhase.FOCUS) PomodoroPhase.FOCUS else PomodoroPhase.BREAK
+            val safeFocus = focusMinutes.coerceIn(5, 90)
+            val safeBreak = breakMinutes.coerceIn(1, 30)
+            val safeCycles = totalCycles.coerceIn(1, 8)
             state.copy(
-                focusMinutes = focus,
-                breakMinutes = breakMinutes,
-                isRunning = false,
-                remainingMillis = when (phase) {
-                    PomodoroPhase.FOCUS -> focus * 60 * 1000L
-                    PomodoroPhase.BREAK -> breakMinutes * 60 * 1000L
-                }
+                focusMinutes = safeFocus,
+                breakMinutes = safeBreak,
+                totalCycles = safeCycles,
+                phase = PomodoroPhase.FOCUS,
+                remainingMillis = safeFocus * 60 * 1000L,
+                completedSessions = 0,
+                isRunning = false
             )
         }
+    }
+
+    fun skipPhase() {
+        timerJob?.cancel()
+        transitionToNextPhase()
     }
 
     private fun startTimer() {
@@ -79,19 +81,7 @@ class PomodoroTimerViewModel @Inject constructor() : ViewModel() {
                 val state = _uiState.value
                 if (!state.isRunning) break
                 if (state.remainingMillis <= 1_000) {
-                    val nextPhase = if (state.phase == PomodoroPhase.FOCUS) PomodoroPhase.BREAK else PomodoroPhase.FOCUS
-                    val nextMillis = if (nextPhase == PomodoroPhase.FOCUS) {
-                        state.focusMinutes * 60 * 1000L
-                    } else {
-                        state.breakMinutes * 60 * 1000L
-                    }
-                    _uiState.update {
-                        it.copy(
-                            phase = nextPhase,
-                            remainingMillis = nextMillis,
-                            completedSessions = if (state.phase == PomodoroPhase.FOCUS) state.completedSessions + 1 else state.completedSessions
-                        )
-                    }
+                    transitionToNextPhase()
                 } else {
                     _uiState.update { it.copy(remainingMillis = it.remainingMillis - 1_000) }
                 }
@@ -102,5 +92,25 @@ class PomodoroTimerViewModel @Inject constructor() : ViewModel() {
     private fun stopTimer() {
         timerJob?.cancel()
         _uiState.update { it.copy(isRunning = false) }
+    }
+
+    private fun transitionToNextPhase() {
+        _uiState.update { state ->
+            val nextPhase = if (state.phase == PomodoroPhase.FOCUS) PomodoroPhase.BREAK else PomodoroPhase.FOCUS
+            val nextMillis = if (nextPhase == PomodoroPhase.FOCUS) {
+                state.focusMinutes * 60 * 1000L
+            } else {
+                state.breakMinutes * 60 * 1000L
+            }
+            state.copy(
+                phase = nextPhase,
+                remainingMillis = nextMillis,
+                completedSessions = if (state.phase == PomodoroPhase.FOCUS) {
+                    (state.completedSessions + 1).coerceAtMost(state.totalCycles)
+                } else {
+                    state.completedSessions
+                }
+            )
+        }
     }
 }
