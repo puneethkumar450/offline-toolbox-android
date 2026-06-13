@@ -17,7 +17,7 @@ object ToolCatalog {
         ToolInfo("time_zone_converter", "Time Zone Converter", "Compare times across cities and zones", ToolCategory.DATE_TIME, "time_zone_converter", listOf("timezone", "world clock", "convert")),
         ToolInfo("calendar", "Calendar", "Browse dates and plan around days", ToolCategory.DATE_TIME, "calendar", listOf("date", "month")),
         ToolInfo("stopwatch", "Stopwatch", "Count up with simple lap timing", ToolCategory.DATE_TIME, "stopwatch_timer", listOf("stopwatch", "count up"), true),
-        ToolInfo("timer", "Timer", "Run a quick countdown", ToolCategory.DATE_TIME, "stopwatch_timer", listOf("timer", "countdown"), true),
+        ToolInfo("timer", "Timer", "Run a quick countdown", ToolCategory.DATE_TIME, "timer", listOf("timer", "countdown"), true),
         ToolInfo("pomodoro", "Pomodoro Timer", "Focus with calm work and break cycles", ToolCategory.DATE_TIME, "pomodoro", listOf("focus", "study", "timer"), true),
         ToolInfo("tally", "Tally Counter", "Count reps, people or inventory locally", ToolCategory.DATE_TIME, "tally", listOf("counter", "volume keys")),
         ToolInfo("breathing", "Breathing Pacer", "Guided inhale, hold and exhale rhythm", ToolCategory.HEALTH, "breathing", listOf("calm", "wellness", "breath"), true),

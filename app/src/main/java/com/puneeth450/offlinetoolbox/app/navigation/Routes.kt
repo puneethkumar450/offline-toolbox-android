@@ -11,6 +11,7 @@ object Routes {
     const val DIGITAL_CLOCK = "digital_clock"
     const val TIME_ZONE_CONVERTER = "time_zone_converter"
     const val CALENDAR = "calendar"
+    const val TIMER = "timer"
     const val POMODORO = "pomodoro"
     const val STOPWATCH_TIMER = "stopwatch_timer"
     const val BREATHING = "breathing"

@@ -160,7 +160,7 @@ private fun TimerScreenContent(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(Modifier.height(30.dp))
+            Spacer(Modifier.height(28.dp))
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(18.dp),
@@ -170,14 +170,14 @@ private fun TimerScreenContent(
                     icon = Icons.Default.Refresh,
                     backgroundColor = MaterialTheme.colorScheme.error.copy(alpha = 0.16f),
                     iconColor = MaterialTheme.colorScheme.error.copy(alpha = 0.88f),
-                    size = 96.dp,
+                    size = 66.dp,
                     onClick = onResetClick
                 )
                 TimerCircleButton(
                     icon = if (state.isRunning) Icons.Default.Pause else Icons.Default.PlayArrow,
                     backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = if (state.isRunning) 0.34f else 1f),
                     iconColor = if (state.isRunning) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onPrimary,
-                    size = 114.dp,
+                    size = 78.dp,
                     onClick = if (state.isRunning) onPauseClick else onStartClick
                 )
             }
@@ -211,7 +211,7 @@ private fun TimerScreenContent(
                 onValueChange = onSecondsChanged
             )
 
-            Spacer(Modifier.height(28.dp))
+            Spacer(Modifier.height(21.dp))
 
             Button(
                 onClick = onStartClick,
@@ -235,17 +235,17 @@ private fun TimerScreenContent(
                 }
             }
 
-            Spacer(Modifier.height(34.dp))
+            Spacer(Modifier.height(28.dp))
             PresetGrid(onPresetSelected = onPresetSelected)
         }
 
-        Spacer(Modifier.height(34.dp))
+        /*Spacer(Modifier.weight(0.5f))
 
         TestAdBanner(
             title = "Test Ad : Data Transfer & Phone Clone",
             description = "Quick data sharing app Best file transfer app Move all data",
             ctaText = "Install"
-        )
+        )*/
     }
 }
 
@@ -283,13 +283,13 @@ private fun RunningTimerCard(remainingMillis: Long) {
         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.78f)
     ) {
         Box(
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 34.dp),
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 24.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = formatTimer(remainingMillis),
                 style = MaterialTheme.typography.headlineLarge.copy(
-                    fontSize = 58.sp,
+                    fontSize = 48.sp,
                     lineHeight = 64.sp,
                     fontWeight = FontWeight.Bold
                 ),
@@ -306,10 +306,12 @@ private fun TimeSlider(
     maxValue: Int,
     onValueChange: (Int) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth().padding(
+        horizontal = 8.dp
+    )) {
         Text(
             text = "$label: $value",
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
         Slider(
@@ -333,11 +335,12 @@ private fun TimeSlider(
 private fun PresetGrid(onPresetSelected: (Int) -> Unit) {
     Text(
         text = "Quick Presets",
-        style = MaterialTheme.typography.headlineMedium,
+        style = MaterialTheme.typography.headlineSmall,
         fontWeight = FontWeight.Bold
     )
     Spacer(Modifier.height(18.dp))
     FlowRow(
+        maxItemsInEachRow = 3,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.fillMaxWidth()
@@ -346,18 +349,18 @@ private fun PresetGrid(onPresetSelected: (Int) -> Unit) {
             val label = if (presetMinutes < 60) {
                 "$presetMinutes min"
             } else if (presetMinutes == 60) {
-                "1 hour"
+                "1H"
             } else {
-                "${presetMinutes / 60} hours"
+                "${presetMinutes / 60} Hrs"
             }
             OutlinedButton(
                 onClick = { onPresetSelected(presetMinutes) },
                 shape = RoundedCornerShape(18.dp),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).padding(0.dp)
             ) {
                 Text(
                     text = label,
-                    modifier = Modifier.padding(vertical = 10.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -385,7 +388,7 @@ private fun TimerCircleButton(
                 imageVector = icon,
                 contentDescription = null,
                 tint = iconColor,
-                modifier = Modifier.size(44.dp)
+                modifier = Modifier.size(34.dp)
             )
         }
     }

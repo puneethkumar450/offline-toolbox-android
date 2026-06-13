@@ -28,7 +28,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.puneeth450.offlinetoolbox.app.feature.datetime.analog.AnalogClockScreen
+import com.puneeth450.offlinetoolbox.app.feature.datetime.calendar.CalendarScreen
 import com.puneeth450.offlinetoolbox.app.feature.datetime.digital.DigitalClockScreen
+import com.puneeth450.offlinetoolbox.app.feature.datetime.timer.TimerScreen
 import com.puneeth450.offlinetoolbox.app.feature.datetime.timezone.TimeZoneConverterScreen
 import com.puneeth450.offlinetoolbox.app.feature.developer.color.ColorConverterScreen
 import com.puneeth450.offlinetoolbox.app.feature.developer.hash.HashGeneratorScreen
@@ -111,7 +113,8 @@ fun OfflineToolboxNavHost() {
                 composable(Routes.ANALOG_CLOCK) { AnalogClockScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.DIGITAL_CLOCK) { DigitalClockScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.TIME_ZONE_CONVERTER) { TimeZoneConverterScreen(onNavigateBack = navController::navigateUp) }
-                composable(Routes.CALENDAR) { ComingSoonToolScreen("Calendar", navController::navigateUp) }
+                composable(Routes.CALENDAR) { CalendarScreen(onNavigateBack = navController::navigateUp) }
+                composable(Routes.TIMER) { TimerScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.POMODORO) { PomodoroTimerScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.STOPWATCH_TIMER) { StopwatchTimerScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.BREATHING) { BreathingPacerScreen(onNavigateBack = navController::navigateUp) }
