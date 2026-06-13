@@ -19,10 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +46,7 @@ import com.puneeth450.offlinetoolbox.app.feature.datetime.clock.ClockTimezones
 import com.puneeth450.offlinetoolbox.app.feature.datetime.clock.TimezoneDialog
 import com.puneeth450.offlinetoolbox.app.ui.components.CommonTopBar
 import com.puneeth450.offlinetoolbox.app.ui.components.ScreenPadding
+import com.puneeth450.offlinetoolbox.app.ui.components.TestAdBanner
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -145,7 +143,11 @@ fun DigitalClockScreen(onNavigateBack: () -> Unit) {
             modifier = Modifier.padding(bottom = 14.dp)
         )
 
-        DigitalClockAdCard()
+        TestAdBanner(
+            title = "Test Ad : Travan: eSIM & Travel SIM",
+            description = "Instant Data, No Roaming Enjoy the World Cup without worrying about roaming charges. Get a plan today.",
+            ctaText = "Install"
+        )
     }
 
     if (showSettings) {
@@ -330,65 +332,6 @@ private fun ColorSwatch(color: Color, selected: Boolean, onClick: () -> Unit) {
                     .clip(CircleShape)
                     .background(if (color == Color.Black) Color.White else Color.Black.copy(alpha = 0.58f))
             )
-        }
-    }
-}
-
-@Composable
-private fun DigitalClockAdCard() {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        shadowElevation = 0.dp
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Row(verticalAlignment = Alignment.Top) {
-                Surface(
-                    shape = RoundedCornerShape(7.dp),
-                    color = MaterialTheme.colorScheme.surface
-                ) {
-                    Text(
-                        text = "Ad",
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp)
-                    )
-                }
-                Spacer(Modifier.weight(1f))
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = null,
-                    tint = Color(0xFF08BFD2),
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-            Text(
-                text = "Test Ad : Travan: eSIM & Travel SIM",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "Instant Data, No Roaming Enjoy the World Cup without worrying about roaming charges. Get a plan today.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Button(
-                onClick = {},
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-            ) {
-                Text(
-                    text = "Install",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 10.dp)
-                )
-            }
         }
     }
 }

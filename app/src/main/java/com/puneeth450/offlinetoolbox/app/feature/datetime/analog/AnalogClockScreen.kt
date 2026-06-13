@@ -18,13 +18,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Public
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +41,7 @@ import com.puneeth450.offlinetoolbox.app.feature.datetime.clock.ClockTimezones
 import com.puneeth450.offlinetoolbox.app.feature.datetime.clock.TimezoneDialog
 import com.puneeth450.offlinetoolbox.app.ui.components.CommonTopBar
 import com.puneeth450.offlinetoolbox.app.ui.components.ScreenPadding
+import com.puneeth450.offlinetoolbox.app.ui.components.TestAdBanner
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -107,7 +104,11 @@ fun AnalogClockScreen(onNavigateBack: () -> Unit) {
         )
 
         Spacer(Modifier.height(34.dp))
-        TestAdCard()
+        TestAdBanner(
+            title = "Test Ad : Travan: eSIM & Travel SIM",
+            description = "Instant Data, No Roaming Enjoy the World Cup without worrying about roaming charges. Get a plan today. Instant",
+            ctaText = "Install"
+        )
     }
 
     if (showTimezoneDialog) {
@@ -234,65 +235,6 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawHand(
         strokeWidth = strokeWidth,
         cap = StrokeCap.Round
     )
-}
-
-@Composable
-private fun TestAdCard() {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        shadowElevation = 0.dp
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Row(verticalAlignment = Alignment.Top) {
-                Surface(
-                    shape = RoundedCornerShape(7.dp),
-                    color = MaterialTheme.colorScheme.surface
-                ) {
-                    Text(
-                        text = "Ad",
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp)
-                    )
-                }
-                Spacer(Modifier.weight(1f))
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = null,
-                    tint = Color(0xFF08BFD2),
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-            Text(
-                text = "Test Ad : Travan: eSIM & Travel SIM",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "Instant Data, No Roaming Enjoy the World Cup without worrying about roaming charges. Get a plan today. Instant",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Button(
-                onClick = {},
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-            ) {
-                Text(
-                    text = "Install",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 10.dp)
-                )
-            }
-        }
-    }
 }
 
 @Composable

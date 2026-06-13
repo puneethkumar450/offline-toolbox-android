@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -16,7 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.puneeth450.offlinetoolbox.app.ui.theme.OfflineToolboxTheme
 
 @Composable
 fun CommonTopBar(
@@ -42,7 +45,7 @@ fun CommonTopBar(
         }
         Text(
             text = title,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = contentColor,
             modifier = Modifier
@@ -60,5 +63,30 @@ fun CommonTopBar(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CommonTopBarPreview() {
+    OfflineToolboxTheme {
+        CommonTopBar(
+            title = "Sample Title",
+            onNavigateBack = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CommonTopBarWithActionPreview() {
+    OfflineToolboxTheme {
+        CommonTopBar(
+            title = "Settings",
+            onNavigateBack = {},
+            actionIcon = Icons.Default.Settings,
+            actionDescription = "Settings",
+            onActionClick = {}
+        )
     }
 }

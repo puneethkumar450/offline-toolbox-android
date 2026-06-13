@@ -27,7 +27,6 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.Button
@@ -62,6 +61,7 @@ import androidx.compose.ui.window.Dialog
 import com.puneeth450.offlinetoolbox.app.R
 import com.puneeth450.offlinetoolbox.app.ui.components.CommonTopBar
 import com.puneeth450.offlinetoolbox.app.ui.components.ScreenPadding
+import com.puneeth450.offlinetoolbox.app.ui.components.TestAdBanner
 import android.app.TimePickerDialog as PlatformTimePickerDialog
 import android.icu.util.TimeZone as IcuTimeZone
 import java.text.SimpleDateFormat
@@ -168,7 +168,11 @@ fun TimeZoneConverterScreen(onNavigateBack: () -> Unit) {
         ConvertedResultCard(place = toPlace, calendar = convertedCalendar)
 
         Spacer(Modifier.height(12.dp))
-        TimeZoneAdCard()
+        TestAdBanner(
+            title = "Test Ad : LG ArtCool klima",
+            description = "Moderan dizajn i snazno hladjenje za maksimalnu udobnost u svakom domu.",
+            ctaText = "Open"
+        )
     }
 
     if (showCountryDialog) {
@@ -630,48 +634,6 @@ private fun TimePickerDialog(
         onDispose {
             dialog.setOnDismissListener(null)
             dialog.dismiss()
-        }
-    }
-}
-
-@Composable
-private fun TimeZoneAdCard() {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(22.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            Row(verticalAlignment = Alignment.Top) {
-                Surface(shape = RoundedCornerShape(7.dp), color = MaterialTheme.colorScheme.surface) {
-                    Text(
-                        text = "Ad",
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp)
-                    )
-                }
-                Spacer(Modifier.weight(1f))
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-            Text(
-                text = "Test Ad : LG ArtCool klima",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "Moderan dizajn i snazno hladjenje za maksimalnu udobnost u svakom domu.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
         }
     }
 }

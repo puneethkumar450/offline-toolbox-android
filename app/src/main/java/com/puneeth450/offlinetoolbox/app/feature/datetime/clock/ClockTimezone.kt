@@ -91,7 +91,7 @@ fun TimezoneDialog(
 
 @Composable
 private fun TimezoneOption(timezone: ClockTimezone, selected: Boolean, onClick: () -> Unit) {
-    val selectedColor = Color(0xFF657DB5)
+    val selectedColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.72f)
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,14 +106,14 @@ private fun TimezoneOption(timezone: ClockTimezone, selected: Boolean, onClick: 
             Text(
                 text = timezone.label,
                 style = MaterialTheme.typography.titleSmall,
-                color = if (selected) Color.White else MaterialTheme.colorScheme.onSurface,
+                color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f)
             )
             if (selected) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
-                    tint = Color(0xFF244274)
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
