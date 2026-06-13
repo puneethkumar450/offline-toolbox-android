@@ -1,5 +1,6 @@
 package com.puneeth450.offlinetoolbox.app.feature.datetime.timer
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -7,6 +8,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -48,8 +50,7 @@ class TimerNotificationService : Service() {
                 } else {
                     if (state.completionCount > lastCompletionCount) {
                         lastCompletionCount = state.completionCount
-                        NotificationManagerCompat.from(this@TimerNotificationService)
-                            .notify(COMPLETED_NOTIFICATION_ID, buildCompletedNotification())
+                        showCompletedNotificationIfPermitted()
                     }
                     stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
@@ -122,6 +123,20 @@ class TimerNotificationService : Service() {
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
+    }
+
+    private fun showCompletedNotificationIfPermitted() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        NotificationManagerCompat.from(this)
+            .notify(COMPLETED_NOTIFICATION_ID, buildCompletedNotification())
     }
 
     private fun createChannel() {

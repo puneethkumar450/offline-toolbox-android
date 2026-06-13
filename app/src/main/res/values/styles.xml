@@ -2,7 +2,6 @@
     <style name="Theme.OfflineToolbox" parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:colorAccent">@color/day_primary</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="Theme.OfflineToolbox.TimePickerDialog" parent="android:style/Theme.Material.Light.Dialog.Alert">
