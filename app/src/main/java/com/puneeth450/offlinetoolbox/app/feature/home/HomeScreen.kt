@@ -28,11 +28,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Apps
+import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Devices
 import androidx.compose.material.icons.filled.Favorite
@@ -41,9 +46,12 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PlusOne
+import androidx.compose.material.icons.filled.Receipt
+import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.ViewAgenda
@@ -566,6 +574,14 @@ private fun DateTimeToolIcon(tool: ToolInfo, tint: Color) {
         "timer" -> Icons.Default.HourglassEmpty
         "pomodoro" -> Icons.Default.PlayArrow
         "tally" -> Icons.Default.PlusOne
+        "invoice_generator" -> Icons.AutoMirrored.Filled.ReceiptLong
+        "interest_calculator" -> Icons.Default.AccountBalance
+        "mutual_fund" -> Icons.AutoMirrored.Filled.TrendingUp
+        "emi" -> Icons.Default.CreditCard
+        "gst_calculator" -> Icons.Default.Receipt
+        "fd_rd_calculator" -> Icons.Default.Savings
+        "expense_tracker" -> Icons.Default.MonetizationOn
+        "gold_silver_rates" -> Icons.Default.AutoGraph
         else -> tool.icon()
     }
     Box(

@@ -120,6 +120,13 @@ fun OfflineToolboxNavHost() {
                 composable(Routes.BREATHING) { BreathingPacerScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.TALLY) { TallyCounterScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.EMI) { EmiCalculatorScreen(onNavigateBack = navController::navigateUp) }
+                composable(Routes.INVOICE_GENERATOR) { ComingSoonToolScreen(title = "Invoice Generator", onNavigateBack = navController::navigateUp) }
+                composable(Routes.INTEREST_CALCULATOR) { ComingSoonToolScreen(title = "Interest Calculator", onNavigateBack = navController::navigateUp) }
+                composable(Routes.MUTUAL_FUND) { ComingSoonToolScreen(title = "Mutual Fund", onNavigateBack = navController::navigateUp) }
+                composable(Routes.GST_CALCULATOR) { ComingSoonToolScreen(title = "GST Calculator", onNavigateBack = navController::navigateUp) }
+                composable(Routes.FD_RD_CALCULATOR) { ComingSoonToolScreen(title = "FD & RD Calculator", onNavigateBack = navController::navigateUp) }
+                composable(Routes.EXPENSE_TRACKER) { ComingSoonToolScreen(title = "Expense Tracker", onNavigateBack = navController::navigateUp) }
+                composable(Routes.GOLD_SILVER_RATES) { ComingSoonToolScreen(title = "Gold/Silver Rates", onNavigateBack = navController::navigateUp) }
                 composable(Routes.SPLIT_BILL) { SplitBillCalculatorScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.DISCOUNT) { DiscountCalculatorScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.RULE72) { Rule72CalculatorScreen(onNavigateBack = navController::navigateUp) }
