@@ -42,6 +42,7 @@ import com.puneeth450.offlinetoolbox.app.feature.device.info.DeviceInfoScreen
 import com.puneeth450.offlinetoolbox.app.feature.device.unit.UnitConverterScreen
 import com.puneeth450.offlinetoolbox.app.feature.finance.discount.DiscountCalculatorScreen
 import com.puneeth450.offlinetoolbox.app.feature.finance.emi.EmiCalculatorScreen
+import com.puneeth450.offlinetoolbox.app.feature.finance.invoice.InvoiceGeneratorScreen
 import com.puneeth450.offlinetoolbox.app.feature.finance.rule72.Rule72CalculatorScreen
 import com.puneeth450.offlinetoolbox.app.feature.finance.split.SplitBillCalculatorScreen
 import com.puneeth450.offlinetoolbox.app.feature.home.FavoritesScreen
@@ -120,7 +121,7 @@ fun OfflineToolboxNavHost() {
                 composable(Routes.BREATHING) { BreathingPacerScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.TALLY) { TallyCounterScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.EMI) { EmiCalculatorScreen(onNavigateBack = navController::navigateUp) }
-                composable(Routes.INVOICE_GENERATOR) { ComingSoonToolScreen(title = "Invoice Generator", onNavigateBack = navController::navigateUp) }
+                composable(Routes.INVOICE_GENERATOR) { InvoiceGeneratorScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.INTEREST_CALCULATOR) { ComingSoonToolScreen(title = "Interest Calculator", onNavigateBack = navController::navigateUp) }
                 composable(Routes.MUTUAL_FUND) { ComingSoonToolScreen(title = "Mutual Fund", onNavigateBack = navController::navigateUp) }
                 composable(Routes.GST_CALCULATOR) { ComingSoonToolScreen(title = "GST Calculator", onNavigateBack = navController::navigateUp) }
