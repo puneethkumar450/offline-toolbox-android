@@ -7,155 +7,839 @@
     <style>
         :root {
             color-scheme: light;
-            --bg: #f4f7fb;
-            --card: #ffffff;
-            --text: #18212b;
-            --muted: #5f6b7a;
-            --accent: #2f6fed;
-            --border: #d9e2ec;
+            --bg: #edf4ff;
+            --surface: rgba(255, 255, 255, 0.72);
+            --surface-strong: #ffffff;
+            --text: #162031;
+            --muted: #5f6d82;
+            --accent: #1367ff;
+            --accent-soft: rgba(19, 103, 255, 0.12);
+            --border: rgba(109, 138, 184, 0.22);
+            --shadow: 0 24px 70px rgba(33, 56, 103, 0.14);
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --radius-md: 14px;
         }
 
         * {
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 100%);
+            font-family: "SF Pro Display", "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(19, 103, 255, 0.18), transparent 28%),
+                radial-gradient(circle at top right, rgba(85, 196, 255, 0.22), transparent 24%),
+                linear-gradient(180deg, #f3f8ff 0%, #eef4ff 42%, #f8fbff 100%);
             color: var(--text);
-            line-height: 1.65;
+            line-height: 1.7;
         }
 
-        main {
-            max-width: 860px;
+        .progress-bar {
+            position: fixed;
+            inset: 0 0 auto;
+            height: 4px;
+            background: linear-gradient(90deg, #75b3ff, var(--accent));
+            transform-origin: left center;
+            transform: scaleX(0);
+            z-index: 20;
+        }
+
+        .page-shell {
+            width: min(1120px, calc(100% - 32px));
             margin: 0 auto;
-            padding: 48px 20px 64px;
+            padding: 32px 0 64px;
         }
 
-        .card {
-            background: var(--card);
+        .hero {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(233, 242, 255, 0.78));
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 32px;
-            box-shadow: 0 18px 50px rgba(19, 35, 64, 0.08);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(14px);
         }
 
-        h1, h2 {
-            line-height: 1.2;
-            margin: 0 0 16px;
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            right: -80px;
+            top: -90px;
+            background: radial-gradient(circle, rgba(19, 103, 255, 0.18), transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.9fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        h1, h2, h3 {
+            margin: 0;
+            line-height: 1.1;
         }
 
         h1 {
-            font-size: 2.2rem;
+            font-size: clamp(2.3rem, 4vw, 4rem);
+            margin-top: 16px;
+            letter-spacing: -0.04em;
         }
 
-        h2 {
-            font-size: 1.15rem;
-            margin-top: 28px;
+        .lead {
+            font-size: 1.05rem;
+            color: var(--muted);
+            max-width: 62ch;
+            margin: 16px 0 20px;
         }
 
-        p, li {
+        .hero-actions,
+        .chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .button,
+        .chip-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 44px;
+            padding: 0 18px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+        }
+
+        .button:hover,
+        .chip-link:hover,
+        details[open] summary:hover,
+        .copy-button:hover,
+        .back-to-top:hover {
+            transform: translateY(-1px);
+        }
+
+        .button-primary {
+            background: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 14px 24px rgba(19, 103, 255, 0.18);
+        }
+
+        .button-secondary,
+        .chip-link {
+            background: rgba(255, 255, 255, 0.84);
             color: var(--text);
-            margin: 0 0 12px;
+            border-color: var(--border);
         }
 
-        .meta, .muted {
+        .hero-side {
+            display: grid;
+            gap: 14px;
+        }
+
+        .metric-card,
+        .contact-card,
+        .content-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .metric-card {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            padding: 18px;
+        }
+
+        .metric {
+            padding: 14px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(19, 103, 255, 0.08);
+        }
+
+        .metric-label {
+            display: block;
+            color: var(--muted);
+            font-size: 0.84rem;
+            margin-bottom: 6px;
+        }
+
+        .metric-value {
+            display: block;
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 260px minmax(0, 1fr);
+            gap: 20px;
+            margin-top: 22px;
+        }
+
+        .sidebar,
+        .content-card {
+            padding: 22px;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 22px;
+            align-self: start;
+        }
+
+        .sidebar h2 {
+            font-size: 1rem;
+            margin-bottom: 14px;
+        }
+
+        .chip-row {
+            margin-bottom: 18px;
+        }
+
+        .nav-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.58);
+            transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #ffffff;
+            border-color: rgba(19, 103, 255, 0.16);
+            transform: translateX(2px);
+        }
+
+        .nav-badge {
+            color: var(--accent);
+            background: var(--accent-soft);
+            min-width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.82rem;
+            font-weight: 800;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: end;
+            margin-bottom: 18px;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-header p {
+            margin: 6px 0 0;
             color: var(--muted);
         }
 
-        ul {
-            padding-left: 20px;
-            margin: 0;
+        .summary-strip {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 22px;
         }
 
-        a {
+        .summary-item {
+            padding: 18px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(242, 247, 255, 0.88));
+            border: 1px solid rgba(19, 103, 255, 0.08);
+        }
+
+        .summary-item strong {
+            display: block;
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+
+        .summary-item span {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .accordion {
+            display: grid;
+            gap: 14px;
+        }
+
+        details {
+            border: 1px solid rgba(19, 103, 255, 0.09);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.8);
+            overflow: hidden;
+            transition: border-color 160ms ease, box-shadow 160ms ease;
+        }
+
+        details[open] {
+            border-color: rgba(19, 103, 255, 0.18);
+            box-shadow: 0 14px 34px rgba(29, 61, 112, 0.08);
+        }
+
+        summary {
+            list-style: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 18px 20px;
+            font-weight: 800;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .summary-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .summary-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: var(--accent-soft);
             color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+        }
+
+        .summary-copy {
+            display: block;
+            color: var(--muted);
+            font-size: 0.92rem;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .summary-plus {
+            flex: 0 0 auto;
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            background: rgba(19, 103, 255, 0.08);
+            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: transform 160ms ease, background 160ms ease;
+        }
+
+        details[open] .summary-plus {
+            transform: rotate(45deg);
+            background: rgba(19, 103, 255, 0.14);
+        }
+
+        .details-body {
+            padding: 0 20px 20px;
+            color: var(--text);
+        }
+
+        .details-body p {
+            margin: 0 0 12px;
+        }
+
+        .details-body ul {
+            margin: 0;
+            padding-left: 20px;
+            color: var(--muted);
+        }
+
+        .details-body li + li {
+            margin-top: 10px;
+        }
+
+        .contact-card {
+            margin-top: 24px;
+            padding: 22px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .contact-text h3 {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+        }
+
+        .contact-text p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .contact-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .mail-link {
+            color: var(--accent);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .copy-button,
+        .back-to-top {
+            min-height: 44px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: #ffffff;
+            color: var(--text);
+            padding: 0 16px;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+        }
+
+        .copy-button.copied {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+            box-shadow: 0 12px 22px rgba(19, 103, 255, 0.18);
+        }
+
+        .back-to-top {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 0 14px 30px rgba(20, 43, 85, 0.14);
+            z-index: 12;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .footnote {
+            margin-top: 18px;
+            color: var(--muted);
+            font-size: 0.94rem;
+        }
+
+        @media (max-width: 940px) {
+            .hero-grid,
+            .layout,
+            .summary-strip {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
         }
 
         @media (max-width: 640px) {
-            main {
-                padding: 24px 14px 40px;
+            .page-shell {
+                width: min(100% - 20px, 1120px);
+                padding: 18px 0 44px;
             }
 
-            .card {
-                padding: 22px;
-                border-radius: 16px;
+            .hero,
+            .sidebar,
+            .content-card,
+            .contact-card {
+                padding: 18px;
+                border-radius: 22px;
+            }
+
+            .metric-card {
+                grid-template-columns: 1fr;
             }
 
             h1 {
-                font-size: 1.8rem;
+                font-size: 2rem;
+            }
+
+            summary {
+                padding: 16px;
+            }
+
+            .details-body {
+                padding: 0 16px 16px;
             }
         }
     </style>
 </head>
 <body>
-    <main>
-        <section class="card">
-            <h1>AI ToolNest Privacy Policy</h1>
-            <p class="meta">Effective date: June 13, 2026</p>
+    <div class="progress-bar" id="progressBar"></div>
 
-            <p>
-                ToolNest is an offline utilities app that provides productivity, finance,
-                developer, and device tools directly on your Android device.
-            </p>
+    <main class="page-shell">
+        <section class="hero">
+            <div class="hero-grid">
+                <div>
+                    <h1>AI ToolNest Privacy Policy</h1>
+                    <p class="lead">
+                        A quick, readable overview of what AI ToolNest stores, what it does not
+                        collect, and how core permissions are used on your device.
+                    </p>
+                    <div class="hero-actions">
+                        <a class="button button-primary" href="#policy">Read the policy</a>
+                        <a class="button button-secondary" href="mailto:kpuneethkumar450@proton.me">Contact support</a>
+                    </div>
+                </div>
 
-            <h2>Information We Store</h2>
-            <p>
-                ToolNest stores limited app information locally on your device to support app
-                functionality and personalization. This may include settings such as theme,
-                layout preferences, favorite tools, recent tools, and timer-related app state.
-            </p>
+                <div class="hero-side">
+                    <div class="metric-card">
+                        <div class="metric">
+                            <span class="metric-label">Effective date</span>
+                            <span class="metric-value">June 13, 2026</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Works mostly offline</span>
+                            <span class="metric-value">Yes</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Account required</span>
+                            <span class="metric-value">No</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Sells personal data</span>
+                            <span class="metric-value">No</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-            <h2>Information We Do Not Collect</h2>
-            <p>
-                ToolNest does not require account creation and does not intentionally collect
-                personal information for analytics, advertising, or profile building.
-            </p>
+        <section class="layout" id="policy">
+            <aside class="sidebar content-card">
+                <h2>Quick jump</h2>
+                <div class="chip-row">
+                    <a class="chip-link" href="#highlights">Highlights</a>
+                    <a class="chip-link" href="#details">Details</a>
+                    <a class="chip-link" href="#contact">Contact</a>
+                </div>
+                <nav class="nav-list" aria-label="Privacy policy sections">
+                    <a class="nav-link active" href="#store">
+                        What we store
+                        <span class="nav-badge">1</span>
+                    </a>
+                    <a class="nav-link" href="#collect">
+                        What we do not collect
+                        <span class="nav-badge">2</span>
+                    </a>
+                    <a class="nav-link" href="#permissions">
+                        Permissions
+                        <span class="nav-badge">3</span>
+                    </a>
+                    <a class="nav-link" href="#usage">
+                        How data is used
+                        <span class="nav-badge">4</span>
+                    </a>
+                    <a class="nav-link" href="#sharing">
+                        Sharing and security
+                        <span class="nav-badge">5</span>
+                    </a>
+                    <a class="nav-link" href="#children">
+                        Children and updates
+                        <span class="nav-badge">6</span>
+                    </a>
+                </nav>
+            </aside>
 
-            <h2>Permissions</h2>
-            <p>ToolNest may request access to the following device capabilities when needed:</p>
-            <ul>
-                <li><strong>Notifications</strong> for timer alerts and countdown updates.</li>
-                <li><strong>Foreground service</strong> to keep an active countdown timer running in the background with a visible notification.</li>
-                <li><strong>Camera flash capability</strong> for the flashlight tool on supported devices.</li>
-            </ul>
+            <section class="content-card">
+                <div class="section-header" id="highlights">
+                    <div>
+                        <h2>Quick highlights</h2>
+                        <p>Short answers first, with full explanations below.</p>
+                    </div>
+                </div>
 
-            <h2>How Information Is Used</h2>
-            <p>
-                Any locally stored data is used only to provide app features and remember your
-                preferences on your device.
-            </p>
+                <div class="summary-strip">
+                    <div class="summary-item">
+                        <strong>Local-first app</strong>
+                        <span>Most settings and usage data stay on your device.</span>
+                    </div>
+                    <div class="summary-item">
+                        <strong>No account needed</strong>
+                        <span>You can use the app without signing in or creating a profile.</span>
+                    </div>
+                    <div class="summary-item">
+                        <strong>Limited permissions</strong>
+                        <span>Only permissions needed for features like timers and flashlight are used.</span>
+                    </div>
+                </div>
 
-            <h2>Data Sharing</h2>
-            <p>
-                ToolNest does not sell your personal information and does not share personal
-                data with third parties.
-            </p>
+                <div class="section-header" id="details">
+                    <div>
+                        <h2>Policy details</h2>
+                        <p>Tap each section to expand it.</p>
+                    </div>
+                </div>
 
-            <h2>Data Security</h2>
-            <p>
-                ToolNest is designed around offline functionality, so most app data remains on
-                your device.
-            </p>
+                <div class="accordion">
+                    <details id="store" open>
+                        <summary>
+                            <span class="summary-meta">
+                                <span class="summary-icon">01</span>
+                                <span>
+                                    Information we store
+                                    <span class="summary-copy">Local settings and app preferences only</span>
+                                </span>
+                            </span>
+                            <span class="summary-plus" aria-hidden="true">+</span>
+                        </summary>
+                        <div class="details-body">
+                            <p>
+                                AI ToolNest stores limited information locally on your device to support
+                                app functionality and personalization.
+                            </p>
+                            <ul>
+                                <li>Theme and appearance settings</li>
+                                <li>Layout preferences and favorites</li>
+                                <li>Recent tool usage and timer-related app state</li>
+                            </ul>
+                        </div>
+                    </details>
 
-            <h2>Children's Privacy</h2>
-            <p>
-                ToolNest is not designed to intentionally collect personal information from
-                children.
-            </p>
+                    <details id="collect">
+                        <summary>
+                            <span class="summary-meta">
+                                <span class="summary-icon">02</span>
+                                <span>
+                                    Information we do not collect
+                                    <span class="summary-copy">No account-based tracking or profile building</span>
+                                </span>
+                            </span>
+                            <span class="summary-plus" aria-hidden="true">+</span>
+                        </summary>
+                        <div class="details-body">
+                            <p>
+                                AI ToolNest does not require account creation and does not intentionally
+                                collect personal information for analytics, advertising, or profile building.
+                            </p>
+                        </div>
+                    </details>
 
-            <h2>Changes to This Policy</h2>
-            <p>
-                This privacy policy may be updated if app features or data practices change.
-            </p>
+                    <details id="permissions">
+                        <summary>
+                            <span class="summary-meta">
+                                <span class="summary-icon">03</span>
+                                <span>
+                                    Permissions
+                                    <span class="summary-copy">Used only when the related feature needs them</span>
+                                </span>
+                            </span>
+                            <span class="summary-plus" aria-hidden="true">+</span>
+                        </summary>
+                        <div class="details-body">
+                            <p>AI ToolNest may request access to the following capabilities when needed:</p>
+                            <ul>
+                                <li><strong>Notifications</strong> for timer alerts and countdown updates.</li>
+                                <li><strong>Foreground service</strong> to keep an active countdown timer running in the background with a visible notification.</li>
+                                <li><strong>Camera flash capability</strong> for the flashlight tool on supported devices.</li>
+                            </ul>
+                        </div>
+                    </details>
 
-            <h2>Contact</h2>
-            <p>
-                For privacy-related questions, contact:
-                <a href="mailto:kpuneethkumar450@proton.me">kpuneethkumar450@proton.me</a>
-            </p>
+                    <details id="usage">
+                        <summary>
+                            <span class="summary-meta">
+                                <span class="summary-icon">04</span>
+                                <span>
+                                    How information is used
+                                    <span class="summary-copy">To power features and remember preferences</span>
+                                </span>
+                            </span>
+                            <span class="summary-plus" aria-hidden="true">+</span>
+                        </summary>
+                        <div class="details-body">
+                            <p>
+                                Any locally stored data is used only to provide app features and remember
+                                your preferences on your device.
+                            </p>
+                        </div>
+                    </details>
+
+                    <details id="sharing">
+                        <summary>
+                            <span class="summary-meta">
+                                <span class="summary-icon">05</span>
+                                <span>
+                                    Data sharing and security
+                                    <span class="summary-copy">No sale of personal data, with an offline-first design</span>
+                                </span>
+                            </span>
+                            <span class="summary-plus" aria-hidden="true">+</span>
+                        </summary>
+                        <div class="details-body">
+                            <p>
+                                AI ToolNest does not sell your personal information and does not share
+                                personal data with third parties.
+                            </p>
+                            <p>
+                                The app is designed around offline functionality, so most app data remains
+                                on your device.
+                            </p>
+                        </div>
+                    </details>
+
+                    <details id="children">
+                        <summary>
+                            <span class="summary-meta">
+                                <span class="summary-icon">06</span>
+                                <span>
+                                    Children's privacy and policy updates
+                                    <span class="summary-copy">Designed without intentional child data collection</span>
+                                </span>
+                            </span>
+                            <span class="summary-plus" aria-hidden="true">+</span>
+                        </summary>
+                        <div class="details-body">
+                            <p>
+                                AI ToolNest is not designed to intentionally collect personal information
+                                from children.
+                            </p>
+                            <p>
+                                This privacy policy may be updated if app features or data practices change.
+                            </p>
+                        </div>
+                    </details>
+                </div>
+
+                <section class="contact-card" id="contact">
+                    <div class="contact-text">
+                        <h3>Questions about privacy?</h3>
+                        <p>Reach out directly and we will respond through the listed email address.</p>
+                    </div>
+                    <div class="contact-actions">
+                        <a class="mail-link" href="mailto:kpuneethkumar450@proton.me">kpuneethkumar450@proton.me</a>
+                        <button class="copy-button" id="copyEmailButton" type="button">Copy email</button>
+                    </div>
+                </section>
+
+                <p class="footnote">
+                    This page is a human-friendly summary of the privacy policy for AI ToolNest.
+                </p>
+            </section>
         </section>
     </main>
+
+    <button class="back-to-top" id="backToTop" type="button">Back to top</button>
+
+    <script>
+        const progressBar = document.getElementById("progressBar");
+        const backToTop = document.getElementById("backToTop");
+        const copyEmailButton = document.getElementById("copyEmailButton");
+        const navLinks = Array.from(document.querySelectorAll(".nav-link"));
+        const observedSections = navLinks
+            .map((link) => document.querySelector(link.getAttribute("href")))
+            .filter(Boolean);
+
+        function updateScrollUi() {
+            const scrollTop = window.scrollY;
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = maxScroll > 0 ? scrollTop / maxScroll : 0;
+
+            progressBar.style.transform = "scaleX(" + progress + ")";
+            backToTop.classList.toggle("visible", scrollTop > 420);
+        }
+
+        function setActiveNav(id) {
+            navLinks.forEach((link) => {
+                const isActive = link.getAttribute("href") === "#" + id;
+                link.classList.toggle("active", isActive);
+            });
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const visibleEntry = entries
+                    .filter((entry) => entry.isIntersecting)
+                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+                if (visibleEntry) {
+                    setActiveNav(visibleEntry.target.id);
+                }
+            },
+            {
+                rootMargin: "-15% 0px -55% 0px",
+                threshold: [0.2, 0.45, 0.7]
+            }
+        );
+
+        observedSections.forEach((section) => observer.observe(section));
+
+        backToTop.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        copyEmailButton.addEventListener("click", async () => {
+            const email = "kpuneethkumar450@proton.me";
+
+            try {
+                await navigator.clipboard.writeText(email);
+                copyEmailButton.textContent = "Copied";
+                copyEmailButton.classList.add("copied");
+                window.setTimeout(() => {
+                    copyEmailButton.textContent = "Copy email";
+                    copyEmailButton.classList.remove("copied");
+                }, 1800);
+            } catch (error) {
+                copyEmailButton.textContent = "Copy failed";
+                window.setTimeout(() => {
+                    copyEmailButton.textContent = "Copy email";
+                }, 1800);
+            }
+        });
+
+        updateScrollUi();
+        window.addEventListener("scroll", updateScrollUi, { passive: true });
+        window.addEventListener("resize", updateScrollUi);
+    </script>
 </body>
 </html>
