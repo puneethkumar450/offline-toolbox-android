@@ -38,8 +38,31 @@ object FinanceCalculators {
         require(rate > 0) { "Return rate must be greater than 0" }
         return 72 / rate
     }
+
+    fun simpleInterest(principal: Double, annualRate: Double, years: Double): InterestResult {
+        require(principal > 0) { "Principal must be greater than 0" }
+        require(annualRate >= 0) { "Rate cannot be negative" }
+        require(years > 0) { "Time period must be greater than 0" }
+        val interest = principal * annualRate * years / 100
+        return InterestResult(interest, principal + interest)
+    }
+
+    fun compoundInterest(
+        principal: Double,
+        annualRate: Double,
+        years: Double,
+        timesPerYear: Int = 1
+    ): InterestResult {
+        require(principal > 0) { "Principal must be greater than 0" }
+        require(annualRate >= 0) { "Rate cannot be negative" }
+        require(years > 0) { "Time period must be greater than 0" }
+        require(timesPerYear > 0) { "Compounding frequency must be greater than 0" }
+        val totalAmount = principal * (1 + annualRate / (100 * timesPerYear)).pow(timesPerYear * years)
+        return InterestResult(totalAmount - principal, totalAmount)
+    }
 }
 
 data class EmiResult(val emi: Double, val totalInterest: Double, val totalPayment: Double)
 data class SplitBillResult(val grandTotal: Double, val perPerson: Double, val tipAmount: Double, val taxAmount: Double)
 data class DiscountResult(val finalPrice: Double, val savedAmount: Double)
+data class InterestResult(val interest: Double, val totalAmount: Double)
