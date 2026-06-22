@@ -43,6 +43,10 @@ import com.puneeth450.offlinetoolbox.app.feature.device.unit.UnitConverterScreen
 import com.puneeth450.offlinetoolbox.app.feature.finance.discount.DiscountCalculatorScreen
 import com.puneeth450.offlinetoolbox.app.feature.finance.emi.EmiCalculatorScreen
 import com.puneeth450.offlinetoolbox.app.feature.finance.interest.InterestCalculatorScreen
+import com.puneeth450.offlinetoolbox.app.feature.finance.fdrd.FdRdScreen
+import com.puneeth450.offlinetoolbox.app.feature.finance.gst.GstCalculatorScreen
+import com.puneeth450.offlinetoolbox.app.feature.finance.mutualfund.MutualFundScreen
+import com.puneeth450.offlinetoolbox.app.feature.finance.expense.ExpenseTrackerScreen
 import com.puneeth450.offlinetoolbox.app.feature.finance.invoice.InvoiceGeneratorScreen
 import com.puneeth450.offlinetoolbox.app.feature.finance.rule72.Rule72CalculatorScreen
 import com.puneeth450.offlinetoolbox.app.feature.finance.split.SplitBillCalculatorScreen
@@ -124,10 +128,10 @@ fun OfflineToolboxNavHost() {
                 composable(Routes.EMI) { EmiCalculatorScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.INVOICE_GENERATOR) { InvoiceGeneratorScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.INTEREST_CALCULATOR) { InterestCalculatorScreen(onNavigateBack = navController::navigateUp) }
-                composable(Routes.MUTUAL_FUND) { ComingSoonToolScreen(title = "Mutual Fund", onNavigateBack = navController::navigateUp) }
-                composable(Routes.GST_CALCULATOR) { ComingSoonToolScreen(title = "GST Calculator", onNavigateBack = navController::navigateUp) }
-                composable(Routes.FD_RD_CALCULATOR) { ComingSoonToolScreen(title = "FD & RD Calculator", onNavigateBack = navController::navigateUp) }
-                composable(Routes.EXPENSE_TRACKER) { ComingSoonToolScreen(title = "Expense Tracker", onNavigateBack = navController::navigateUp) }
+                composable(Routes.MUTUAL_FUND) { MutualFundScreen(onNavigateBack = navController::navigateUp) }
+                composable(Routes.GST_CALCULATOR) { GstCalculatorScreen(onNavigateBack = navController::navigateUp) }
+                composable(Routes.FD_RD_CALCULATOR) { FdRdScreen(onNavigateBack = navController::navigateUp) }
+                composable(Routes.EXPENSE_TRACKER) { ExpenseTrackerScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.GOLD_SILVER_RATES) { ComingSoonToolScreen(title = "Gold/Silver Rates", onNavigateBack = navController::navigateUp) }
                 composable(Routes.SPLIT_BILL) { SplitBillCalculatorScreen(onNavigateBack = navController::navigateUp) }
                 composable(Routes.DISCOUNT) { DiscountCalculatorScreen(onNavigateBack = navController::navigateUp) }

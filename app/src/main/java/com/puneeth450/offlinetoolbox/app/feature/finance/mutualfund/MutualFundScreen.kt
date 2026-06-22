@@ -1,4 +1,4 @@
-package com.puneeth450.offlinetoolbox.app.feature.finance.interest
+package com.puneeth450.offlinetoolbox.app.feature.finance.mutualfund
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,10 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -27,51 +23,48 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.puneeth450.offlinetoolbox.app.domain.finance.InterestResult
-import com.puneeth450.offlinetoolbox.app.domain.finance.formatIndianCurrency
+import com.puneeth450.offlinetoolbox.app.domain.finance.MutualFundResult
+import com.puneeth450.offlinetoolbox.app.domain.finance.formatIndianCompact
 import com.puneeth450.offlinetoolbox.app.ui.components.CommonTopBar
 import com.puneeth450.offlinetoolbox.app.ui.components.ScreenPadding
+import com.puneeth450.offlinetoolbox.app.ui.components.TestAdBanner
 import com.puneeth450.offlinetoolbox.app.ui.theme.OfflineToolboxTheme
 
 @Composable
-fun InterestCalculatorScreen(
+fun MutualFundScreen(
     onNavigateBack: () -> Unit,
-    viewModel: InterestCalculatorViewModel = hiltViewModel()
+    viewModel: MutualFundViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-    InterestCalculatorContent(
+    MutualFundContent(
         state = state,
         onNavigateBack = onNavigateBack,
-        onInterestTypeChange = viewModel::onInterestTypeChange,
-        onPrincipalChange = viewModel::onPrincipalChange,
+        onInvestmentTypeChange = viewModel::onInvestmentTypeChange,
+        onAmountChange = viewModel::onAmountChange,
         onRateChange = viewModel::onRateChange,
-        onTimeChange = viewModel::onTimeChange,
-        onCompoundingFrequencyChange = viewModel::onCompoundingFrequencyChange,
+        onPeriodChange = viewModel::onPeriodChange,
         onReset = viewModel::reset,
         onCalculate = viewModel::calculate
     )
 }
 
 @Composable
-private fun InterestCalculatorContent(
-    state: InterestCalculatorUiState,
+private fun MutualFundContent(
+    state: MutualFundUiState,
     onNavigateBack: () -> Unit,
-    onInterestTypeChange: (InterestType) -> Unit,
-    onPrincipalChange: (String) -> Unit,
+    onInvestmentTypeChange: (InvestmentType) -> Unit,
+    onAmountChange: (String) -> Unit,
     onRateChange: (String) -> Unit,
-    onTimeChange: (String) -> Unit,
-    onCompoundingFrequencyChange: (CompoundingFrequency) -> Unit,
+    onPeriodChange: (String) -> Unit,
     onReset: () -> Unit,
     onCalculate: () -> Unit
 ) {
@@ -82,12 +75,23 @@ private fun InterestCalculatorContent(
             .verticalScroll(rememberScrollState())
             .padding(ScreenPadding)
     ) {
-        CommonTopBar(title = "Interest Calculator", onNavigateBack = onNavigateBack)
+        CommonTopBar(title = "Mutual Fund Calculator", onNavigateBack = onNavigateBack)
 
         Spacer(Modifier.height(20.dp))
 
         Text(
-            text = "Interest Type",
+            text = "Plan Your Investment",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(24.dp))
+
+        Text(
+            text = "Investment Type",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
@@ -99,16 +103,16 @@ private fun InterestCalculatorContent(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            InterestTypeChip(
-                label = "Simple Interest",
-                selected = state.interestType == InterestType.SIMPLE,
-                onClick = { onInterestTypeChange(InterestType.SIMPLE) },
+            InvestmentTypeChip(
+                label = "SIP",
+                selected = state.investmentType == InvestmentType.SIP,
+                onClick = { onInvestmentTypeChange(InvestmentType.SIP) },
                 modifier = Modifier.weight(1f)
             )
-            InterestTypeChip(
-                label = "Compound Interest",
-                selected = state.interestType == InterestType.COMPOUND,
-                onClick = { onInterestTypeChange(InterestType.COMPOUND) },
+            InvestmentTypeChip(
+                label = "Lumpsum",
+                selected = state.investmentType == InvestmentType.LUMPSUM,
+                onClick = { onInvestmentTypeChange(InvestmentType.LUMPSUM) },
                 modifier = Modifier.weight(1f)
             )
         }
@@ -116,9 +120,14 @@ private fun InterestCalculatorContent(
         Spacer(Modifier.height(28.dp))
 
         OutlinedTextField(
-            value = state.principal,
-            onValueChange = onPrincipalChange,
-            label = { Text("Principal Amount") },
+            value = state.amount,
+            onValueChange = onAmountChange,
+            label = {
+                Text(
+                    if (state.investmentType == InvestmentType.SIP) "Monthly Investment"
+                    else "One-time Investment"
+                )
+            },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             shape = RoundedCornerShape(14.dp),
@@ -130,7 +139,7 @@ private fun InterestCalculatorContent(
         OutlinedTextField(
             value = state.rate,
             onValueChange = onRateChange,
-            label = { Text("Rate of Interest") },
+            label = { Text("Expected Annual Return") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             shape = RoundedCornerShape(14.dp),
@@ -141,23 +150,15 @@ private fun InterestCalculatorContent(
         Spacer(Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = state.time,
-            onValueChange = onTimeChange,
-            label = { Text("Time Period") },
+            value = state.period,
+            onValueChange = onPeriodChange,
+            label = { Text("Investment Period") },
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             shape = RoundedCornerShape(14.dp),
             modifier = Modifier.fillMaxWidth(),
             suffix = { Text("years") }
         )
-
-        if (state.interestType == InterestType.COMPOUND) {
-            Spacer(Modifier.height(16.dp))
-            CompoundingFrequencyDropdown(
-                selected = state.compoundingFrequency,
-                onSelected = onCompoundingFrequencyChange
-            )
-        }
 
         Spacer(Modifier.height(24.dp))
 
@@ -202,14 +203,32 @@ private fun InterestCalculatorContent(
         }
 
         state.result?.let { result ->
-            Spacer(Modifier.height(18.dp))
-            InterestResultCard(state = state, result = result)
+            Spacer(Modifier.height(20.dp))
+            MaturityValueCard(totalValue = result.totalValue)
+            Spacer(Modifier.height(12.dp))
+            InvestmentSummaryCard(
+                result = result,
+                period = state.period
+            )
+            Spacer(Modifier.height(12.dp))
+            WealthGainCard(
+                invested = result.investedAmount,
+                returns = result.estimatedReturns
+            )
         }
+
+        Spacer(Modifier.height(20.dp))
+
+        TestAdBanner(
+            title = "Test Ad : Vparty - Group Voice Chat Room",
+            description = "Popular voice party app. Party with friends. Try Now",
+            ctaText = "Install"
+        )
     }
 }
 
 @Composable
-private fun InterestTypeChip(
+private fun InvestmentTypeChip(
     label: String,
     selected: Boolean,
     onClick: () -> Unit,
@@ -245,116 +264,114 @@ private fun InterestTypeChip(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CompoundingFrequencyDropdown(
-    selected: CompoundingFrequency,
-    onSelected: (CompoundingFrequency) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = it }
+private fun MaturityValueCard(totalValue: Double) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f)
     ) {
-        OutlinedTextField(
-            value = selected.label,
-            onValueChange = {},
-            readOnly = true,
-            label = { Text("Compounding Frequency") },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            shape = RoundedCornerShape(14.dp),
-            modifier = Modifier
-                .menuAnchor()
-                .fillMaxWidth()
-        )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
+        Column(
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            CompoundingFrequency.entries.forEach { frequency ->
-                DropdownMenuItem(
-                    text = { Text(frequency.label) },
-                    onClick = {
-                        onSelected(frequency)
-                        expanded = false
-                    }
-                )
-            }
+            Text(
+                text = "Maturity Value",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.surface
+            )
+            Text(
+                text = formatIndianCompact(totalValue),
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
 
 @Composable
-private fun InterestResultCard(state: InterestCalculatorUiState, result: InterestResult) {
+private fun InvestmentSummaryCard(result: MutualFundResult, period: String) {
     val onColor = MaterialTheme.colorScheme.surface
-    val mutedColor = onColor.copy(alpha = 0.75f)
+    val mutedColor = onColor.copy(alpha = 0.80f)
+    val greenColor = Color(0xFF4CAF50)
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.onSurfaceVariant
+        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.72f)
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = if (state.interestType == InterestType.COMPOUND) "Compound Interest" else "Simple Interest",
+                text = "Investment Summary",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = onColor
             )
-
-            Spacer(Modifier.height(6.dp))
-
-            InterestResultRow("Principal", formatIndianCurrency(state.principal.toDoubleOrNull() ?: 0.0), mutedColor, onColor)
-            InterestResultRow("Rate", "${state.rate}% per year", mutedColor, onColor)
-            InterestResultRow("Time", "${state.time} years", mutedColor, onColor)
-            if (state.interestType == InterestType.COMPOUND) {
-                InterestResultRow("Compounding", state.compoundingFrequency.label, mutedColor, onColor)
-            }
-
-            Spacer(Modifier.height(10.dp))
-
-            InterestResultRow("Interest Earned", formatIndianCurrency(result.interest), mutedColor, mutedColor)
-
-            Spacer(Modifier.height(2.dp))
-
-            Text(
-                text = "Total Amount",
-                style = MaterialTheme.typography.bodyLarge,
-                color = mutedColor
-            )
-            Text(
-                text = formatIndianCurrency(result.totalAmount),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = onColor
+            SummaryRow(label = "Total Invested", value = formatIndianCompact(result.investedAmount), labelColor = mutedColor, valueColor = onColor)
+            SummaryRow(label = "Estimated Returns", value = formatIndianCompact(result.estimatedReturns), labelColor = mutedColor, valueColor = greenColor)
+            SummaryRow(
+                label = "Investment Period",
+                value = "${period.toDoubleOrNull()?.let { if (it % 1.0 == 0.0) it.toInt().toString() else it.toString() } ?: period} years",
+                labelColor = mutedColor,
+                valueColor = onColor,
+                valueBold = true
             )
         }
     }
 }
 
 @Composable
-private fun InterestResultRow(
+private fun WealthGainCard(invested: Double, returns: Double) {
+    val gainPercent = if (invested > 0) (returns / invested) * 100 else 0.0
+    val gainText = "+${"%.1f".format(gainPercent)}%"
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        color = Color(0xFFE8F5E9)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Wealth Gain",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = gainText,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF2E7D32)
+            )
+        }
+    }
+}
+
+@Composable
+private fun SummaryRow(
     label: String,
     value: String,
     labelColor: Color,
-    valueColor: Color
+    valueColor: Color,
+    valueBold: Boolean = false
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            color = labelColor
-        )
+        Text(text = label, style = MaterialTheme.typography.bodyLarge, color = labelColor)
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold,
+            fontWeight = if (valueBold) FontWeight.Bold else FontWeight.SemiBold,
             color = valueColor
         )
     }
@@ -363,16 +380,15 @@ private fun InterestResultRow(
 
 @Preview(showBackground = true)
 @Composable
-private fun InterestCalculatorEmptyPreview() {
+private fun MutualFundEmptyPreview() {
     OfflineToolboxTheme(darkTheme = false) {
-        InterestCalculatorContent(
-            state = InterestCalculatorUiState(),
+        MutualFundContent(
+            state = MutualFundUiState(),
             onNavigateBack = {},
-            onInterestTypeChange = {},
-            onPrincipalChange = {},
+            onInvestmentTypeChange = {},
+            onAmountChange = {},
             onRateChange = {},
-            onTimeChange = {},
-            onCompoundingFrequencyChange = {},
+            onPeriodChange = {},
             onReset = {},
             onCalculate = {}
         )
@@ -381,21 +397,25 @@ private fun InterestCalculatorEmptyPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun InterestCalculatorResultPreview() {
+private fun MutualFundResultPreview() {
     OfflineToolboxTheme(darkTheme = false) {
-        InterestCalculatorContent(
-            state = InterestCalculatorUiState(
-                principal = "100000",
-                rate = "7.5",
-                time = "5",
-                result = InterestResult(interest = 37500.0, totalAmount = 137500.0)
+        MutualFundContent(
+            state = MutualFundUiState(
+                investmentType = InvestmentType.SIP,
+                amount = "10000",
+                rate = "13",
+                period = "1",
+                result = MutualFundResult(
+                    investedAmount = 1_00_000.0,
+                    estimatedReturns = 13_000.0,
+                    totalValue = 1_13_000.0
+                )
             ),
             onNavigateBack = {},
-            onInterestTypeChange = {},
-            onPrincipalChange = {},
+            onInvestmentTypeChange = {},
+            onAmountChange = {},
             onRateChange = {},
-            onTimeChange = {},
-            onCompoundingFrequencyChange = {},
+            onPeriodChange = {},
             onReset = {},
             onCalculate = {}
         )

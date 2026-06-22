@@ -39,6 +39,74 @@ object FinanceCalculators {
         return 72 / rate
     }
 
+    fun sipReturns(monthlyInvestment: Double, annualRate: Double, years: Int): MutualFundResult {
+        require(monthlyInvestment > 0) { "Monthly investment must be greater than 0" }
+        require(annualRate >= 0) { "Rate cannot be negative" }
+        require(years > 0) { "Time period must be greater than 0" }
+        val n = years * 12
+        val r = annualRate / 12 / 100
+        val totalValue = if (r == 0.0) {
+            monthlyInvestment * n
+        } else {
+            monthlyInvestment * ((1 + r).pow(n) - 1) / r * (1 + r)
+        }
+        val invested = monthlyInvestment * n
+        return MutualFundResult(invested, totalValue - invested, totalValue)
+    }
+
+    fun lumpsumReturns(principal: Double, annualRate: Double, years: Int): MutualFundResult {
+        require(principal > 0) { "Investment amount must be greater than 0" }
+        require(annualRate >= 0) { "Rate cannot be negative" }
+        require(years > 0) { "Time period must be greater than 0" }
+        val totalValue = principal * (1 + annualRate / 100).pow(years.toDouble())
+        return MutualFundResult(principal, totalValue - principal, totalValue)
+    }
+
+    fun calculateFd(
+        principal: Double,
+        annualRate: Double,
+        tenureYears: Double,
+        compoundingFrequency: Int  // times per year: 4 = quarterly, 1 = yearly
+    ): FdRdResult {
+        require(principal > 0) { "Principal must be greater than 0" }
+        require(annualRate >= 0) { "Rate cannot be negative" }
+        require(tenureYears > 0) { "Tenure must be greater than 0" }
+        val r = annualRate / 100
+        val maturity = principal * (1 + r / compoundingFrequency).pow(compoundingFrequency * tenureYears)
+        val interest = maturity - principal
+        return FdRdResult(principal, 0.0, interest, maturity)
+    }
+
+    fun calculateRd(
+        monthlyDeposit: Double,
+        annualRate: Double,
+        tenureMonths: Int
+    ): FdRdResult {
+        require(monthlyDeposit > 0) { "Monthly deposit must be greater than 0" }
+        require(annualRate >= 0) { "Rate cannot be negative" }
+        require(tenureMonths > 0) { "Tenure must be greater than 0" }
+        // Quarterly compounding: i = r/(4*100), n = months/3 quarters
+        val i = annualRate / (4.0 * 100.0)
+        val n = tenureMonths / 3.0
+        val maturity = monthlyDeposit * ((1 + i).pow(n) - 1) / (1 - (1 + i).pow(-1.0 / 3.0))
+        val totalInvestment = monthlyDeposit * tenureMonths
+        val interest = maturity - totalInvestment
+        return FdRdResult(0.0, totalInvestment, interest, maturity)
+    }
+
+    fun calculateGst(amount: Double, ratePercent: Double, inclusive: Boolean): GstResult {
+        require(amount >= 0) { "Amount cannot be negative" }
+        require(ratePercent >= 0) { "GST rate cannot be negative" }
+        return if (inclusive) {
+            val base = amount * 100.0 / (100.0 + ratePercent)
+            val gst = amount - base
+            GstResult(base, gst, amount)
+        } else {
+            val gst = amount * ratePercent / 100.0
+            GstResult(amount, gst, amount + gst)
+        }
+    }
+
     fun simpleInterest(principal: Double, annualRate: Double, years: Double): InterestResult {
         require(principal > 0) { "Principal must be greater than 0" }
         require(annualRate >= 0) { "Rate cannot be negative" }
@@ -66,3 +134,11 @@ data class EmiResult(val emi: Double, val totalInterest: Double, val totalPaymen
 data class SplitBillResult(val grandTotal: Double, val perPerson: Double, val tipAmount: Double, val taxAmount: Double)
 data class DiscountResult(val finalPrice: Double, val savedAmount: Double)
 data class InterestResult(val interest: Double, val totalAmount: Double)
+data class GstResult(val baseAmount: Double, val gstAmount: Double, val totalAmount: Double)
+// principal is 0 for RD (use totalInvestment); totalInvestment is 0 for FD (use principal)
+data class FdRdResult(val principal: Double, val totalInvestment: Double, val interestEarned: Double, val maturityAmount: Double)
+data class MutualFundResult(
+    val investedAmount: Double,
+    val estimatedReturns: Double,
+    val totalValue: Double
+)

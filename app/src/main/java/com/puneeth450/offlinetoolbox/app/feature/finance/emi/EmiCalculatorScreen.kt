@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.puneeth450.offlinetoolbox.app.domain.finance.EmiResult
+import com.puneeth450.offlinetoolbox.app.domain.finance.formatIndianCurrency
 import com.puneeth450.offlinetoolbox.app.ui.components.CommonTopBar
 import com.puneeth450.offlinetoolbox.app.ui.components.ScreenPadding
 import com.puneeth450.offlinetoolbox.app.ui.components.TestAdBanner
@@ -287,14 +288,14 @@ private fun EmiResultCard(result: EmiResult) {
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "%,.2f".format(result.emi),
+                    text = formatIndianCurrency(result.emi),
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-            EmiResultRow("Total Interest", "%,.2f".format(result.totalInterest))
-            EmiResultRow("Total Payment", "%,.2f".format(result.totalPayment))
+            EmiResultRow("Total Interest", formatIndianCurrency(result.totalInterest))
+            EmiResultRow("Total Payment", formatIndianCurrency(result.totalPayment))
         }
     }
 }
