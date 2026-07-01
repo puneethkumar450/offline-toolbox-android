@@ -365,7 +365,7 @@ private fun IncomeExpenseCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(30.dp)
                     .clip(CircleShape)
                     .background(circleColor),
                 contentAlignment = Alignment.Center

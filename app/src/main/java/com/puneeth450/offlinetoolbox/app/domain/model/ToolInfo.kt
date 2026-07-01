@@ -29,7 +29,7 @@ object ToolCatalog {
         ToolInfo("fd_rd_calculator", "FD & RD Calculator", "Fixed and recurring deposit maturity", ToolCategory.FINANCE, "fd_rd_calculator", listOf("fd", "rd", "deposit", "maturity")),
         ToolInfo("expense_tracker", "Expense Tracker", "Track daily spending offline", ToolCategory.FINANCE, "expense_tracker", listOf("budget", "spending", "money")),
         ToolInfo("gold_silver_rates", "Gold/Silver Rates", "Compute gold and silver value", ToolCategory.FINANCE, "gold_silver_rates", listOf("gold", "silver", "metal", "rate")),
-        ToolInfo("split_bill", "Split Bill Calculator", "Share bills with tax and tip", ToolCategory.FINANCE, "split_bill", listOf("tip", "restaurant")),
+        //ToolInfo("split_bill", "Split Bill Calculator", "Share bills with tax and tip", ToolCategory.FINANCE, "split_bill", listOf("tip", "restaurant")),
         ToolInfo("json", "JSON Formatter", "Format, minify and validate JSON", ToolCategory.DEVELOPER, "json", listOf("api", "pretty print"), true),
         ToolInfo("url_codec", "URL Encoder/Decoder", "Encode or decode URL text", ToolCategory.SOCIAL_WEB, "url_codec", listOf("encode", "decode")),
         ToolInfo("hash", "Hash Generator", "MD5, SHA-1, SHA-256 and SHA-512", ToolCategory.DEVELOPER, "hash", listOf("checksum", "security")),
